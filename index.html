@@ -1,45 +1,2626 @@
-<!--
-  Hit RUN to see this project in action!
-  
-  This project will auto-refresh as you edit the HTML, CSS and JS. See README.md for more info (including how to disable auto-refresh and install packages).
--->
-
 <!DOCTYPE html>
-<html>
-
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>Replit</title>
-  <link href="style.css" rel="stylesheet" type="text/css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة فروقات الترقية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5D5CDE',
+                    },
+                    fontFamily: {
+                        'sans': ['Tajawal', 'sans-serif'],
+                    }
+                }
+            }
+        }
+
+        // التحقق من الوضع المظلم
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        .dark {
+            --bg-primary: #181818;
+            --text-primary: #ffffff;
+            --border-color: #333333;
+        }
+        
+        :root {
+            --bg-primary: #ffffff;
+            --text-primary: #333333;
+            --border-color: #e5e7eb;
+        }
+        
+        .print-only {
+            display: none;
+        }
+        
+        @media print {
+            /* إخفاء كل العناصر غير الضرورية للطباعة */
+            .no-print, button, .container > h1, #tabs, [id$="-tab"], [id$="-btn"], .floating-variables-btn {
+                display: none !important;
+            }
+            
+            /* إظهار العناصر المخصصة للطباعة فقط */
+            .print-only {
+                display: block !important;
+            }
+            
+            /* إخفاء كل شيء في البداية ثم إظهار ما نريده فقط */
+            body > div:not(.print-only) {
+                display: none !important;
+            }
+            
+            /* إعداد صفحة الطباعة */
+            .print-page {
+                display: block !important;
+                page-break-after: always;
+                height: 297mm;
+                width: 210mm;
+                margin: 0 auto !important;
+                padding: 12mm 15mm !important; /* زيادة الهوامش للمحتوى */
+                box-sizing: border-box;
+                position: relative;
+                background-color: white;
+                color: black;
+                overflow: visible;
+            }
+            
+            /* تنسيق الجسم للطباعة */
+            body {
+                background-color: white !important;
+                color: black !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                min-height: auto !important;
+            }
+            
+            /* تنسيق الجداول المطبوعة */
+            .print-table {
+                width: 100% !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+                table-layout: fixed;
+                border-collapse: collapse;
+            }
+            
+            .print-table td, .print-table th {
+                border: 1px solid #000 !important;
+                padding: 6px 8px !important;
+                font-size: 13px !important;
+                white-space: nowrap !important;
+                text-align: center !important;
+                vertical-align: middle !important;
+            }
+            
+            /* إعدادات الصفحة */
+            @page {
+                size: A4 portrait;
+                margin: 0;
+            }
+            
+            /* التأكد من تطبيق الخط الصحيح للطباعة */
+            * {
+                font-family: 'Tajawal', 'Arial', sans-serif !important;
+                box-sizing: border-box !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            
+            /* تصحيح مشكلة حدود الطباعة في بعض المتصفحات */
+            html, body {
+                overflow: visible !important;
+                height: auto !important;
+            }
+            
+            /* إظهار الصفوف المخفية عند الطباعة */
+            .hidden.print\:table-row {
+                display: table-row !important;
+            }
+            
+            .print\:show {
+                display: block !important;
+            }
+            
+            .print\:hidden {
+                display: none !important;
+            }
+        }
+        
+        table.form-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+        
+        table.form-table th, table.form-table td {
+            border: 1px solid var(--border-color);
+            padding: 0.5rem;
+            text-align: center;
+        }
+        
+        table.form-table th {
+            background-color: rgba(93, 92, 222, 0.1);
+        }
+        
+        .dark table.form-table th {
+            background-color: rgba(93, 92, 222, 0.3);
+        }
+        
+        /* تحسين حقول التوقيع - إزالة الخطوط السفلية */
+        .signature-field {
+            min-width: 200px;
+            display: inline-block;
+            min-height: 24px;
+            margin: 0 10px;
+            padding-bottom: 4px;
+            text-align: center;
+        }
+        
+        /* تحسين الجداول في طباعة النماذج */
+        .print-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+        
+        .print-table th, .print-table td {
+            border: 1px solid #000;
+            padding: 8px 4px;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 14px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .print-table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        
+        /* ستايل خاص بالتوقيعات */
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+        
+        .signature-box {
+            width: 30%;
+            text-align: center;
+        }
+        
+        .signature-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .signature-line {
+            margin-bottom: 15px;
+        }
+        
+        .signature-line-label {
+            display: inline-block;
+            width: 60px;
+            text-align: left;
+        }
+        
+        .signature-line-value {
+            display: inline-block;
+            min-width: 150px;
+            text-align: right;
+            height: 20px;
+        }
+        
+        /* تحسين محاذاة النماذج */
+        .rtl-align {
+            text-align: right !important;
+            direction: rtl !important;
+        }
+        
+        .center-align {
+            text-align: center !important;
+        }
+
+        /* إضافة ستايل لزر الحذف */
+        .delete-row-btn {
+            color: #ef4444;
+            padding: 2px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .delete-row-btn:hover {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+        
+        .dark .delete-row-btn:hover {
+            background-color: #7f1d1d;
+            color: #fca5a5;
+        }
+    </style>
 </head>
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-center text-primary mb-8">نظام إدارة فروقات الترقية</h1>
+        
+        <!-- نظام التبويب -->
+        <div class="no-print mb-8">
+            <div class="border-b border-gray-200 dark:border-gray-700">
+                <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="tabs">
+                    <li class="mr-2" role="presentation">
+                        <button id="data-tab" class="inline-block p-4 border-b-2 border-primary rounded-t-lg active" aria-selected="true" type="button" onclick="switchTab('data')">
+                            إدخال البيانات
+                        </button>
+                    </li>
+                    <li class="mr-2" role="presentation">
+                        <button id="forms-tab" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-primary hover:border-primary" aria-selected="false" type="button" onclick="switchTab('forms')">
+                            معاينة النماذج
+                        </button>
+                    </li>
+                    <li class="mr-2" role="presentation">
+                        <button id="list-tab" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-primary hover:border-primary" aria-selected="false" type="button" onclick="switchTab('list')">
+                            قائمة الأسماء
+                        </button>
+                    </li>
+                    <li class="mr-2" role="presentation">
+                        <button id="settings-tab" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-primary hover:border-primary" aria-selected="false" type="button" onclick="switchTab('settings')">
+                            الإعدادات
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- قسم إدخال البيانات -->
+        <div id="data-content" class="tab-content no-print">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">معلومات العسكري</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label for="name" class="block text-gray-700 dark:text-gray-300 mb-2">الاسم</label>
+                        <input type="text" id="name" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" dir="rtl">
+                    </div>
+                    
+                    <div>
+                        <label for="general-number" class="block text-gray-700 dark:text-gray-300 mb-2">الرقم العام</label>
+                        <input type="text" id="general-number" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" dir="rtl">
+                    </div>
 
-<body>
-  <main>
-    <h1 class="title">Welcome to HTML on Replit!</h1>
-    <p class="description">Get started by editing
-      <code class="code">index.html</code>. The webview will auto-refresh as you edit! (See <code
-        class="code">README.md</code> if you want to
-      disable auto-refresh.)
-    </p>
+                    <div>
+                        <label for="id-number" class="block text-gray-700 dark:text-gray-300 mb-2">السجل المدني</label>
+                        <input type="text" id="id-number" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" dir="rtl">
+                    </div>
+                    
+                    <div>
+                        <label for="unit" class="block text-gray-700 dark:text-gray-300 mb-2">الوحدة</label>
+                        <input type="text" id="unit" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" value="كتيبة الشرطة العسكرية الحادية عشر" dir="rtl">
+                    </div>
+                    
+                    <div>
+                        <label for="start-date" class="block text-gray-700 dark:text-gray-300 mb-2">تاريخ بداية الحسبة</label>
+                        <input type="date" id="start-date" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base">
+                    </div>
+                    
+                    <div>
+                        <label for="end-date" class="block text-gray-700 dark:text-gray-300 mb-2">تاريخ نهاية الحسبة</label>
+                        <input type="date" id="end-date" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base">
+                    </div>
+                    
+                    <div>
+                        <label for="commencement-date" class="block text-gray-700 dark:text-gray-300 mb-2">تاريخ المباشرة</label>
+                        <input type="date" id="commencement-date" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base">
+                    </div>
+                    
+                    <div>
+                        <label for="change-type" class="block text-gray-700 dark:text-gray-300 mb-2">نوع التعديل</label>
+                        <select id="change-type" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" onchange="updateDeleteButtonsVisibility()">
+                            <option value="ترقية">ترقية</option>
+                            <option value="تعديل درجة">تعديل درجة</option>
+                            <option value="إضافة بدل">إضافة بدل</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <h2 class="text-xl font-semibold mb-4">معلومات الرتبة والراتب</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label for="old-rank" class="block text-gray-700 dark:text-gray-300 mb-2">الرتبة السابقة</label>
+                        <select id="old-rank" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" onchange="updateRankAndDegree()">
+                            <option value="جندي">جندي</option>
+                            <option value="جندي أول">جندي أول</option>
+                            <option value="عريف">عريف</option>
+                            <option value="وكيل رقيب">وكيل رقيب</option>
+                            <option value="رقيب">رقيب</option>
+                            <option value="رقيب أول">رقيب أول</option>
+                            <option value="رئيس رقباء">رئيس رقباء</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="new-rank" class="block text-gray-700 dark:text-gray-300 mb-2">الرتبة الحالية</label>
+                        <select id="new-rank" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" onchange="updateSalaryScale()">
+                            <option value="جندي أول">جندي أول</option>
+                            <option value="عريف">عريف</option>
+                            <option value="وكيل رقيب">وكيل رقيب</option>
+                            <option value="رقيب">رقيب</option>
+                            <option value="رقيب أول">رقيب أول</option>
+                            <option value="رئيس رقباء">رئيس رقباء</option>
+                            <option value="ملازم">ملازم</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="old-degree" class="block text-gray-700 dark:text-gray-300 mb-2">الدرجة السابقة</label>
+                        <select id="old-degree" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" onchange="updateBasedOnOldDegree()">
+                            <option value="1">الأولى</option>
+                            <option value="2">الثانية</option>
+                            <option value="3">الثالثة</option>
+                            <option value="4">الرابعة</option>
+                            <option value="5">الخامسة</option>
+                            <option value="6">السادسة</option>
+                            <option value="7">السابعة</option>
+                            <option value="8">الثامنة</option>
+                            <option value="9">التاسعة</option>
+                            <option value="10">العاشرة</option>
+                            <option value="11">الحادية عشر</option>
+                            <option value="12">الثانية عشر</option>
+                            <option value="13">الثالثة عشر</option>
+                            <option value="14">الرابعة عشر</option>
+                            <option value="15">الخامسة عشر</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="new-degree" class="block text-gray-700 dark:text-gray-300 mb-2">الدرجة الحالية</label>
+                        <select id="new-degree" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" onchange="updateSalaryScale()">
+                            <option value="1">الأولى</option>
+                            <option value="2">الثانية</option>
+                            <option value="3">الثالثة</option>
+                            <option value="4">الرابعة</option>
+                            <option value="5">الخامسة</option>
+                            <option value="6">السادسة</option>
+                            <option value="7">السابعة</option>
+                            <option value="8">الثامنة</option>
+                            <option value="9">التاسعة</option>
+                            <option value="10">العاشرة</option>
+                            <option value="11">الحادية عشر</option>
+                            <option value="12">الثانية عشر</option>
+                            <option value="13">الثالثة عشر</option>
+                            <option value="14">الرابعة عشر</option>
+                            <option value="15">الخامسة عشر</option>
+                        </select>
+                    </div>
+                </div>
 
-    <section class="grid">
-      <a href="https://replit.com/learn" class='card'>
-        <h2>Learn &rarr;</h2>
-        <p>Find tutorials on Replit to learn more.</p>
-      </a>
+                <h2 class="text-xl font-semibold mb-4">مفردات الراتب</h2>
+                
+                <div class="overflow-x-auto">
+                    <table class="form-table mb-4" id="allowances-table">
+                        <thead>
+                            <tr>
+                                <th width="40%">نوع البدل</th>
+                                <th width="30%">المبلغ السابق</th>
+                                <th width="30%">المبلغ الحالي</th>
+                                <th width="5%" class="delete-column" style="display: none;">حذف</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-row-id="basic-salary" data-type="basic">
+                                <td>الراتب الأساسي</td>
+                                <td><input type="number" id="old-basic-salary" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" min="0" step="0.01" onchange="recalculateAllowances('old')"></td>
+                                <td><input type="number" id="new-basic-salary" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" min="0" step="0.01" onchange="recalculateAllowances('new')"></td>
+                                <td class="delete-column" style="display: none;">
+                                    <span class="delete-row-btn hidden" onclick="hideRow('basic-salary')">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr data-row-id="terrorism" data-type="allowance">
+                                <td>
+                                    <div class="flex justify-between items-center">
+                                        <span>بدل مكافحة الإرهاب (25%)</span>
+                                        <button type="button" id="toggle-terrorism-calc" class="px-2 py-1 text-xs bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 rounded-md hover:bg-yellow-200" onclick="toggleAllowanceCalculation('terrorism')">
+                                            <span id="terrorism-calc-status">يدوي</span>
+                                        </button>
+                                    </div>
+                                </td>
+                                <td><input type="number" id="old-terrorism" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" min="0" step="0.01"></td>
+                                <td><input type="number" id="new-terrorism" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" min="0" step="0.01"></td>
+                                <td class="delete-column" style="display: none;">
+                                    <span class="delete-row-btn" onclick="hideRow('terrorism')">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr data-row-id="security" data-type="allowance">
+                                <td>
+                                    <div class="flex justify-between items-center">
+                                        <span>علاوة الأمن (شرطة عسكرية) (25%)</span>
+                                        <button type="button" id="toggle-security-calc" class="px-2 py-1 text-xs bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 rounded-md hover:bg-yellow-200" onclick="toggleAllowanceCalculation('security')">
+                                            <span id="security-calc-status">يدوي</span>
+                                        </button>
+                                    </div>
+                                </td>
+                                <td><input type="number" id="old-security" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" min="0" step="0.01"></td>
+                                <td><input type="number" id="new-security" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" min="0" step="0.01"></td>
+                                <td class="delete-column" style="display: none;">
+                                    <span class="delete-row-btn" onclick="hideRow('security')">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="flex justify-end mb-3">
+                        <button id="add-allowance-btn" class="bg-primary hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors flex items-center" onclick="showAddAllowanceModal()">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            إضافة بدل
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- نافذة إضافة بدل جديد -->
+                <div id="add-allowance-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
+                        <h3 class="text-lg font-semibold mb-4">إضافة بدل جديد</h3>
+                        
+                        <div class="grid grid-cols-1 gap-4 mb-4">
+                            <div>
+                                <label for="allowance-name" class="block text-gray-700 dark:text-gray-300 mb-2">اسم البدل</label>
+                                <input type="text" id="allowance-name" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" placeholder="مثال: بدل طبيعة عمل">
+                            </div>
+                            
+                            <div>
+                                <label for="allowance-type" class="block text-gray-700 dark:text-gray-300 mb-2">نوع الحساب</label>
+                                <select id="allowance-type" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" onchange="updateAllowanceTypeFields()">
+                                    <option value="first-degree">نسبة من راتب الدرجة الأولى</option>
+                                    <option value="current-degree">نسبة من راتب الدرجة الحالية</option>
+                                    <option value="fixed">مبلغ ثابت</option>
+                                    <option value="custom">بدل مخصص (مع البحث)</option>
+                                </select>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" id="allowance-type-description">
+                                    يتم حساب البدل كنسبة من راتب الدرجة الأولى للرتبة (مثل بدل مكافحة الإرهاب)
+                                </p>
+                            </div>
+                            
+                            <div id="percentage-container">
+                                <label for="allowance-percentage" class="block text-gray-700 dark:text-gray-300 mb-2">نسبة البدل (%)</label>
+                                <input type="number" id="allowance-percentage" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" min="0" max="100" value="25">
+                                <div class="flex mt-2 text-sm">
+                                    <span class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded-md mr-1 cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600" onclick="document.getElementById('allowance-percentage').value='25'">25%</span>
+                                    <span class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded-md mr-1 cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600" onclick="document.getElementById('allowance-percentage').value='9'">9%</span>
+                                    <span class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded-md mr-1 cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600" onclick="document.getElementById('allowance-percentage').value='15'">15%</span>
+                                </div>
+                            </div>
+                            
+                            <div id="fixed-amount-container" class="hidden">
+                                <label for="allowance-amount-old" class="block text-gray-700 dark:text-gray-300 mb-2">المبلغ السابق</label>
+                                <input type="number" id="allowance-amount-old" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" min="0">
+                                
+                                <label for="allowance-amount-new" class="block text-gray-700 dark:text-gray-300 mt-2 mb-2">المبلغ الحالي</label>
+                                <input type="number" id="allowance-amount-new" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" min="0">
+                            </div>
+                            
+                            <div id="custom-search-container" class="hidden">
+                                <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md mb-2 text-sm">
+                                    <p>عند استخدام البدل المخصص، سيقوم النظام بالبحث عن القيم في سلم الرواتب بناءً على معايير البحث التالية.</p>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <label for="search-rank-old" class="block text-gray-700 dark:text-gray-300 mb-1">رتبة البدل السابق</label>
+                                    <select id="search-rank-old" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base">
+                                        <option value="old-rank">نفس الرتبة السابقة</option>
+                                        <option value="new-rank">نفس الرتبة الحالية</option>
+                                        <option value="جندي">جندي</option>
+                                        <option value="جندي أول">جندي أول</option>
+                                        <option value="عريف">عريف</option>
+                                        <option value="وكيل رقيب">وكيل رقيب</option>
+                                        <option value="رقيب">رقيب</option>
+                                        <option value="رقيب أول">رقيب أول</option>
+                                        <option value="رئيس رقباء">رئيس رقباء</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <label for="search-degree-old" class="block text-gray-700 dark:text-gray-300 mb-1">درجة البدل السابق</label>
+                                    <select id="search-degree-old" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base">
+                                        <option value="1">الدرجة الأولى</option>
+                                        <option value="old-degree">نفس الدرجة السابقة</option>
+                                        <option value="2">الدرجة الثانية</option>
+                                        <option value="3">الدرجة الثالثة</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <label for="search-rank-new" class="block text-gray-700 dark:text-gray-300 mb-1">رتبة البدل الحالي</label>
+                                    <select id="search-rank-new" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base">
+                                        <option value="new-rank">نفس الرتبة الحالية</option>
+                                        <option value="old-rank">نفس الرتبة السابقة</option>
+                                        <option value="جندي">جندي</option>
+                                        <option value="جندي أول">جندي أول</option>
+                                        <option value="عريف">عريف</option>
+                                        <option value="وكيل رقيب">وكيل رقيب</option>
+                                        <option value="رقيب">رقيب</option>
+                                        <option value="رقيب أول">رقيب أول</option>
+                                        <option value="رئيس رقباء">رئيس رقباء</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <label for="search-degree-new" class="block text-gray-700 dark:text-gray-300 mb-1">درجة البدل الحالي</label>
+                                    <select id="search-degree-new" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base">
+                                        <option value="1">الدرجة الأولى</option>
+                                        <option value="new-degree">نفس الدرجة الحالية</option>
+                                        <option value="2">الدرجة الثانية</option>
+                                        <option value="3">الدرجة الثالثة</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <label for="allowance-custom-percentage" class="block text-gray-700 dark:text-gray-300 mb-1">نسبة مطبقة على القيم (%)</label>
+                                    <input type="number" id="allowance-custom-percentage" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" min="0" max="100" value="100">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                        استخدم 100% للحصول على القيمة الأصلية، أو أدخل نسبة مئوية لتطبيقها على القيمة المحددة
+                                    </p>
+                                </div>
+                                
+                                <div class="p-3 bg-green-50 dark:bg-green-900/20 rounded-md text-sm mt-3">
+                                    <p>القيم المتوقعة بناءً على معايير البحث:</p>
+                                    <div class="flex justify-between mt-1">
+                                        <span>المبلغ السابق: <strong id="preview-old-amount">-</strong></span>
+                                        <span>المبلغ الحالي: <strong id="preview-new-amount">-</strong></span>
+                                    </div>
+                                    <button type="button" id="preview-search-btn" class="w-full mt-2 bg-green-600 hover:bg-green-700 text-white py-1 rounded-md text-sm font-medium transition-colors" onclick="previewCustomSearch()">معاينة البحث</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-end space-x-3 space-x-reverse">
+                            <button id="cancel-allowance-btn" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md text-base font-medium transition-colors" onclick="hideAddAllowanceModal()">إلغاء</button>
+                            <button id="save-allowance-btn" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-md text-base font-medium transition-colors" onclick="addNewAllowance()">إضافة</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <h2 class="text-xl font-semibold mb-4">الحسميات</h2>
+                
+                <div class="overflow-x-auto">
+                    <table class="form-table mb-6" id="deductions-table">
+                        <thead>
+                            <tr>
+                                <th width="40%">نوع الحسم</th>
+                                <th width="30%">المبلغ السابق</th>
+                                <th width="30%">المبلغ الحالي</th>
+                                <th width="5%" class="delete-column" style="display: none;">حذف</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-row-id="retirement" data-type="deduction">
+                                <td>
+                                    <div class="flex justify-between items-center">
+                                        <span>التقاعد (9%)</span>
+                                        <button type="button" id="toggle-retirement-calc" class="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-md hover:bg-blue-200" onclick="toggleAllowanceCalculation('retirement')">
+                                            <span id="retirement-calc-status">تلقائي</span>
+                                        </button>
+                                    </div>
+                                </td>
+                                <td><input type="number" id="old-retirement" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" min="0" step="0.01"></td>
+                                <td><input type="number" id="new-retirement" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" min="0" step="0.01"></td>
+                                <td class="delete-column" style="display: none;">
+                                    <span class="delete-row-btn" onclick="hideRow('retirement')">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="flex flex-wrap justify-center gap-4 mt-6">
+                    <button id="calculate-btn" class="bg-primary hover:bg-blue-700 text-white px-6 py-3 rounded-md text-lg font-medium transition-colors" onclick="calculateDifferences()">حساب الفروقات</button>
+                    <button id="add-to-list-btn" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-md text-lg font-medium transition-colors" onclick="addToList()">إضافة للقائمة</button>
+                    <button id="reset-form-btn" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-md text-lg font-medium transition-colors" onclick="resetForm()">إعادة تعيين</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- قسم معاينة النماذج -->
+        <div id="forms-content" class="tab-content hidden">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">معاينة النماذج</h2>
+                
+                <!-- إضافة خيار إظهار الصفوف الصفرية -->
+                <div class="flex items-center space-x-2 space-x-reverse mt-2 mb-4">
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="show-zero-rows-toggle" class="form-checkbox h-5 w-5 text-primary" onchange="toggleDisplaySetting('showZeroRows', this.checked)">
+                        <span class="mr-2">إظهار الصفوف ذات القيمة صفر</span>
+                    </label>
+                    <label class="inline-flex items-center cursor-pointer mr-4">
+                        <input type="checkbox" id="show-totals-toggle" class="form-checkbox h-5 w-5 text-primary" onchange="toggleDisplaySetting('showTotals', this.checked)">
+                        <span class="mr-2">إظهار المجاميع في النماذج</span>
+                    </label>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <button id="preview-difference-btn" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-md text-base font-medium transition-colors" onclick="previewDifferenceForm()">معاينة نموذج فروقات الترقية</button>
+                    <button id="preview-declaration-btn" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-md text-base font-medium transition-colors" onclick="previewDeclarationForm()">معاينة نموذج عدم أسبقية الصرف</button>
+                </div>
+                
+                <div class="flex justify-center gap-4 my-4">
+                    <button id="print-forms-btn" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-md text-lg font-medium transition-colors" onclick="printCurrentForm()">
+                        <span class="mr-2">طباعة النموذج الحالي</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                        </svg>
+                    </button>
+                    
+                    <button id="export-word-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md text-lg font-medium transition-colors" onclick="downloadAsWordDoc()">
+                        <span class="mr-2">تصدير التقرير</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                        </svg>
+                    </button>
+                </div>
+                
+                <div id="preview-container" class="border border-gray-300 dark:border-gray-700 rounded-lg p-8 bg-white text-black min-h-[500px] print-container">
+                    <div id="difference-form" class="preview-form">
+                        <!-- نموذج فروقات الترقية سيتم تعبئته بواسطة JavaScript -->
+                    </div>
+                    <div id="declaration-form" class="preview-form hidden">
+                        <!-- نموذج إقرار عدم أسبقية الصرف سيتم تعبئته بواسطة JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- قسم قائمة الأسماء -->
+        <div id="list-content" class="tab-content hidden">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">قائمة الأسماء</h2>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse" id="people-table">
+                        <thead>
+                            <tr class="bg-gray-100 dark:bg-gray-700">
+                                <th class="border border-gray-300 dark:border-gray-600 p-2">الاسم</th>
+                                <th class="border border-gray-300 dark:border-gray-600 p-2">الرقم العام</th>
+                                <th class="border border-gray-300 dark:border-gray-600 p-2">الوحدة</th>
+                                <th class="border border-gray-300 dark:border-gray-600 p-2">الرتبة</th>
+                                <th class="border border-gray-300 dark:border-gray-600 p-2">من تاريخ</th>
+                                <th class="border border-gray-300 dark:border-gray-600 p-2">إلى تاريخ</th>
+                                <th class="border border-gray-300 dark:border-gray-600 p-2">المبلغ</th>
+                                <th class="border border-gray-300 dark:border-gray-600 p-2">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- سيتم ملء هذا الجدول ديناميكيًا -->
+                            <tr class="text-center">
+                                <td colspan="8" class="border border-gray-300 dark:border-gray-600 p-4 text-gray-500 dark:text-gray-400">
+                                    لا توجد بيانات. قم بإضافة أشخاص من شاشة إدخال البيانات.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-6 flex justify-center space-x-4 space-x-reverse">
+                    <button id="export-list-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md text-lg font-medium transition-colors flex items-center" onclick="exportList()">
+                        <span class="mr-2">تصدير القائمة</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                        </svg>
+                    </button>
+                    <button id="clear-list-btn" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md text-lg font-medium transition-colors flex items-center" onclick="clearList()">
+                        <span class="mr-2">حذف القائمة</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- قسم الإعدادات -->
+        <div id="settings-content" class="tab-content hidden">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">إعدادات النظام</h2>
+                
+                <div class="space-y-6">
+                    <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                        <h3 class="text-lg font-medium mb-3">إعدادات العرض</h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="settings-show-zero-rows" class="form-checkbox h-5 w-5 text-primary" onchange="updateSetting('display', 'showZeroRows', this.checked)">
+                                <span class="mr-2">إظهار الصفوف ذات القيمة صفر في النماذج</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="settings-show-totals" class="form-checkbox h-5 w-5 text-primary" onchange="updateSetting('display', 'showTotals', this.checked)">
+                                <span class="mr-2">إظهار مجاميع الفروقات والحسميات في النماذج</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                        <h3 class="text-lg font-medium mb-3">إعدادات الحساب</h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="settings-auto-terrorism" class="form-checkbox h-5 w-5 text-primary" onchange="updateCalculationSetting('terrorism', this.checked)">
+                                <span class="mr-2">حساب بدل مكافحة الإرهاب تلقائيًا (25% من راتب الدرجة الأولى)</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="settings-auto-security" class="form-checkbox h-5 w-5 text-primary" onchange="updateCalculationSetting('security', this.checked)">
+                                <span class="mr-2">حساب علاوة الأمن تلقائيًا (25% من الراتب الأساسي)</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="settings-auto-retirement" class="form-checkbox h-5 w-5 text-primary" checked onchange="updateCalculationSetting('retirement', this.checked)">
+                                <span class="mr-2">حساب التقاعد تلقائيًا (9% من الراتب الأساسي)</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                        <h3 class="text-lg font-medium mb-3">إعدادات افتراضية</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="settings-default-unit" class="block mb-1">الوحدة الافتراضية</label>
+                                <input type="text" id="settings-default-unit" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" value="كتيبة الشرطة العسكرية الحادية عشر" onchange="updateSetting('defaults', 'unit', this.value)">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-center mt-6">
+                        <button id="save-settings-btn" class="bg-primary hover:bg-blue-700 text-white px-6 py-3 rounded-md text-lg font-medium transition-colors" onclick="saveSettings()">حفظ الإعدادات</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- سلم الرواتب -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mt-6">
+                <h2 class="text-xl font-semibold mb-4">سلم الرواتب</h2>
+                
+                <div class="overflow-x-auto">
+                    <table class="form-table mb-4">
+                        <thead>
+                            <tr>
+                                <th>الرتبة / الدرجة</th>
+                                <th>1</th>
+                                <th>2</th>
+                                <th>3</th>
+                                <th>4</th>
+                                <th>5</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>جندي</td>
+                                <td><input type="number" id="scale-جندي-1" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4990"></td>
+                                <td><input type="number" id="scale-جندي-2" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5190"></td>
+                                <td><input type="number" id="scale-جندي-3" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5390"></td>
+                                <td><input type="number" id="scale-جندي-4" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5590"></td>
+                                <td><input type="number" id="scale-جندي-5" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5790"></td>
+                            </tr>
+                            <tr>
+                                <td>جندي أول</td>
+                                <td><input type="number" id="scale-جندي أول-1" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5370"></td>
+                                <td><input type="number" id="scale-جندي أول-2" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5580"></td>
+                                <td><input type="number" id="scale-جندي أول-3" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5790"></td>
+                                <td><input type="number" id="scale-جندي أول-4" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6000"></td>
+                                <td><input type="number" id="scale-جندي أول-5" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6210"></td>
+                            </tr>
+                            <tr>
+                                <td>عريف</td>
+                                <td><input type="number" id="scale-عريف-1" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5790"></td>
+                                <td><input type="number" id="scale-عريف-2" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6010"></td>
+                                <td><input type="number" id="scale-عريف-3" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6230"></td>
+                                <td><input type="number" id="scale-عريف-4" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6450"></td>
+                                <td><input type="number" id="scale-عريف-5" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6670"></td>
+                            </tr>
+                            <tr>
+                                <td>وكيل رقيب</td>
+                                <td><input type="number" id="scale-وكيل رقيب-1" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6300"></td>
+                                <td><input type="number" id="scale-وكيل رقيب-2" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6540"></td>
+                                <td><input type="number" id="scale-وكيل رقيب-3" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6770"></td>
+                                <td><input type="number" id="scale-وكيل رقيب-4" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7010"></td>
+                                <td><input type="number" id="scale-وكيل رقيب-5" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7240"></td>
+                            </tr>
+                            <tr>
+                                <td>رقيب</td>
+                                <td><input type="number" id="scale-رقيب-1" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6870"></td>
+                                <td><input type="number" id="scale-رقيب-2" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7120"></td>
+                                <td><input type="number" id="scale-رقيب-3" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7370"></td>
+                                <td><input type="number" id="scale-رقيب-4" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7620"></td>
+                                <td><input type="number" id="scale-رقيب-5" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7870"></td>
+                            </tr>
+                            <tr>
+                                <td>رقيب أول</td>
+                                <td><input type="number" id="scale-رقيب أول-1" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7500"></td>
+                                <td><input type="number" id="scale-رقيب أول-2" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7770"></td>
+                                <td><input type="number" id="scale-رقيب أول-3" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="8040"></td>
+                                <td><input type="number" id="scale-رقيب أول-4" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="8310"></td>
+                                <td><input type="number" id="scale-رقيب أول-5" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="8580"></td>
+                            </tr>
+                            <tr>
+                                <td>رئيس رقباء</td>
+                                <td><input type="number" id="scale-رئيس رقباء-1" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="8180"></td>
+                                <td><input type="number" id="scale-رئيس رقباء-2" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="8470"></td>
+                                <td><input type="number" id="scale-رئيس رقباء-3" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="8760"></td>
+                                <td><input type="number" id="scale-رئيس رقباء-4" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="9050"></td>
+                                <td><input type="number" id="scale-رئيس رقباء-5" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="9340"></td>
+                            </tr>
+                            <tr>
+                                <td>ملازم</td>
+                                <td><input type="number" id="scale-ملازم-1" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="10020"></td>
+                                <td><input type="number" id="scale-ملازم-2" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="10390"></td>
+                                <td><input type="number" id="scale-ملازم-3" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="10760"></td>
+                                <td><input type="number" id="scale-ملازم-4" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="11130"></td>
+                                <td><input type="number" id="scale-ملازم-5" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="11500"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-4 flex justify-center">
+                    <button id="save-salary-scale-btn" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-md text-base font-medium transition-colors" onclick="saveSalaryScale()">حفظ سلم الرواتب</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- إطار الطباعة -->
+        <div id="print-frame" class="print-only">
+            <div class="print-page">
+                <div id="print-difference-form"></div>
+            </div>
+        </div>
 
-      <a href="https://docs.replit.com/category/deployments" class='card'>
-        <h2>Deploy &rarr;</h2>
-        <p>
-          After you are happy with this app, deploy it on Replit!
-        </p>
-      </a>
-    </section>
-  </main>
+        <script>
+            let peopleList = [];
+            let differenceTotal = 0;
+            let calculatedData = {};
+            let customAllowances = []; // قائمة البدلات المخصصة
+            let deletedAllowances = []; // قائمة البدلات المحذوفة
+            let hiddenRows = new Set(); // قائمة بالصفوف المخفية
+            
+            // كائن لتخزين إعدادات التطبيق
+            let appSettings = {
+                display: {
+                    showZeroRows: false,
+                    showTotals: false,
+                    darkMode: false
+                },
+                calculation: {
+                    autoTerrorism: false,  // افتراضيًا يدوي
+                    autoSecurity: false,   // افتراضيًا يدوي
+                    autoRetirement: true   // افتراضيًا تلقائي
+                },
+                defaults: {
+                    unit: "كتيبة الشرطة العسكرية الحادية عشر",
+                    changeType: "ترقية"
+                }
+            };
 
-  <script type="module" src="script.js"></script>
+            // متغيرات لحفظ حالة حساب البدلات
+            let allowanceCalculationMode = {
+                terrorism: 'manual', // وضع بدل مكافحة الإرهاب: يدوي
+                security: 'manual',  // وضع علاوة الأمن: يدوي
+                retirement: 'auto'   // وضع التقاعد: تلقائي
+            };
+            
+            // استرجاع الإعدادات المحفوظة من localStorage عند تحميل الصفحة
+            document.addEventListener('DOMContentLoaded', function() {
+                loadSettings();
+                // تحميل سلم الرواتب من localStorage
+                loadSalaryScale();
+                // تحميل قائمة الأشخاص من localStorage
+                loadPeopleList();
+                
+                // ضبط حالة أزرار التبديل بين التلقائي واليدوي
+                setInitialToggleButtonsState();
+                // تحديث ظهور أزرار الحذف بناءً على نوع التعديل
+                updateDeleteButtonsVisibility();
+            });
+            
+            // تبديل التبويبات
+            function switchTab(tabId) {
+                const tabContents = document.getElementsByClassName('tab-content');
+                for (let i = 0; i < tabContents.length; i++) {
+                    tabContents[i].classList.add('hidden');
+                }
+                
+                const tabButtons = document.querySelectorAll('#tabs button');
+                for (let i = 0; i < tabButtons.length; i++) {
+                    tabButtons[i].classList.remove('border-primary');
+                    tabButtons[i].classList.add('border-transparent');
+                    tabButtons[i].ariaSelected = "false";
+                }
+                
+                document.getElementById(`${tabId}-content`).classList.remove('hidden');
+                document.getElementById(`${tabId}-tab`).classList.add('border-primary');
+                document.getElementById(`${tabId}-tab`).classList.remove('border-transparent');
+                document.getElementById(`${tabId}-tab`).ariaSelected = "true";
+            }
+            
+            // تحديث ظهور أزرار الحذف بناءً على نوع التعديل
+            function updateDeleteButtonsVisibility() {
+                const changeType = document.getElementById('change-type').value;
+                const deleteColumns = document.querySelectorAll('.delete-column');
+                const deleteButtons = document.querySelectorAll('.delete-row-btn');
+                
+                // في حالة "ترقية"، يتم إخفاء أزرار الحذف
+                if (changeType === 'ترقية') {
+                    deleteColumns.forEach(col => col.style.display = 'none');
+                } else {
+                    // في حالات التعديل الأخرى، يتم إظهار أزرار الحذف
+                    deleteColumns.forEach(col => col.style.display = 'table-cell');
+                    
+                    // لا يمكن حذف الراتب الأساسي في كل الأحوال
+                    const basicSalaryDeleteButton = document.querySelector('tr[data-row-id="basic-salary"] .delete-row-btn');
+                    if (basicSalaryDeleteButton) basicSalaryDeleteButton.classList.add('hidden');
+                    
+                    // إظهار الصفوف المخفية مسبقًا
+                    restoreHiddenRows();
+                }
+            }
+            
+            // إخفاء صف من الجدول
+            function hideRow(rowId) {
+                const row = document.querySelector(`tr[data-row-id="${rowId}"]`);
+                if (row) {
+                    row.style.display = 'none';
+                    hiddenRows.add(rowId);
+                    
+                    // تصفير قيم الحقول المخفية
+                    const oldInput = document.getElementById(`old-${rowId}`);
+                    const newInput = document.getElementById(`new-${rowId}`);
+                    
+                    if (oldInput) oldInput.value = '0';
+                    if (newInput) newInput.value = '0';
+                }
+            }
+            
+            // استعادة الصفوف المخفية
+            function restoreHiddenRows() {
+                hiddenRows.forEach(rowId => {
+                    const row = document.querySelector(`tr[data-row-id="${rowId}"]`);
+                    if (row) {
+                        row.style.display = 'table-row';
+                    }
+                });
+                hiddenRows.clear();
+            }
+            
+            // ضبط حالة أزرار التبديل بين التلقائي واليدوي عند تحميل الصفحة
+            function setInitialToggleButtonsState() {
+                // بدل مكافحة الإرهاب
+                const terrorismStatusElement = document.getElementById('terrorism-calc-status');
+                const terrorismButtonElement = document.getElementById('toggle-terrorism-calc');
+                if (terrorismStatusElement && terrorismButtonElement) {
+                    terrorismStatusElement.textContent = allowanceCalculationMode.terrorism === 'auto' ? 'تلقائي' : 'يدوي';
+                    if (allowanceCalculationMode.terrorism === 'auto') {
+                        terrorismButtonElement.classList.remove('bg-yellow-100', 'dark:bg-yellow-900', 'text-yellow-700', 'dark:text-yellow-300');
+                        terrorismButtonElement.classList.add('bg-blue-100', 'dark:bg-blue-900', 'text-blue-700', 'dark:text-blue-300');
+                    } else {
+                        terrorismButtonElement.classList.remove('bg-blue-100', 'dark:bg-blue-900', 'text-blue-700', 'dark:text-blue-300');
+                        terrorismButtonElement.classList.add('bg-yellow-100', 'dark:bg-yellow-900', 'text-yellow-700', 'dark:text-yellow-300');
+                    }
+                }
+                
+                // علاوة الأمن
+                const securityStatusElement = document.getElementById('security-calc-status');
+                const securityButtonElement = document.getElementById('toggle-security-calc');
+                if (securityStatusElement && securityButtonElement) {
+                    securityStatusElement.textContent = allowanceCalculationMode.security === 'auto' ? 'تلقائي' : 'يدوي';
+                    if (allowanceCalculationMode.security === 'auto') {
+                        securityButtonElement.classList.remove('bg-yellow-100', 'dark:bg-yellow-900', 'text-yellow-700', 'dark:text-yellow-300');
+                        securityButtonElement.classList.add('bg-blue-100', 'dark:bg-blue-900', 'text-blue-700', 'dark:text-blue-300');
+                    } else {
+                        securityButtonElement.classList.remove('bg-blue-100', 'dark:bg-blue-900', 'text-blue-700', 'dark:text-blue-300');
+                        securityButtonElement.classList.add('bg-yellow-100', 'dark:bg-yellow-900', 'text-yellow-700', 'dark:text-yellow-300');
+                    }
+                }
+                
+                // التقاعد
+                const retirementStatusElement = document.getElementById('retirement-calc-status');
+                const retirementButtonElement = document.getElementById('toggle-retirement-calc');
+                if (retirementStatusElement && retirementButtonElement) {
+                    retirementStatusElement.textContent = allowanceCalculationMode.retirement === 'auto' ? 'تلقائي' : 'يدوي';
+                    if (allowanceCalculationMode.retirement === 'auto') {
+                        retirementButtonElement.classList.remove('bg-yellow-100', 'dark:bg-yellow-900', 'text-yellow-700', 'dark:text-yellow-300');
+                        retirementButtonElement.classList.add('bg-blue-100', 'dark:bg-blue-900', 'text-blue-700', 'dark:text-blue-300');
+                    } else {
+                        retirementButtonElement.classList.remove('bg-blue-100', 'dark:bg-blue-900', 'text-blue-700', 'dark:text-blue-300');
+                        retirementButtonElement.classList.add('bg-yellow-100', 'dark:bg-yellow-900', 'text-yellow-700', 'dark:text-yellow-300');
+                    }
+                }
+            }
+            
+            // تحديث الرتبة والدرجة تلقائيًا
+            function updateRankAndDegree() {
+                const ranksList = ["جندي", "جندي أول", "عريف", "وكيل رقيب", "رقيب", "رقيب أول", "رئيس رقباء", "ملازم"];
+                const oldRank = document.getElementById('old-rank').value;
+                
+                // تحديد الرتبة التالية
+                const oldRankIndex = ranksList.indexOf(oldRank);
+                if (oldRankIndex >= 0 && oldRankIndex < ranksList.length - 1) {
+                    document.getElementById('new-rank').value = ranksList[oldRankIndex + 1];
+                }
+                
+                updateSalaryScale();
+            }
+            
+            // تحديث الدرجة الحالية بناءً على الدرجة السابقة
+            function updateBasedOnOldDegree() {
+                const oldDegree = parseInt(document.getElementById('old-degree').value);
+                const newDegree = Math.max(1, oldDegree - 1); // الدرجة الحالية هي الدرجة السابقة - 1 (لا تقل عن 1)
+                document.getElementById('new-degree').value = newDegree.toString();
+                
+                // البحث عن الراتب المناسب بناءً على الراتب السابق
+                findOptimalDegreeBasedOnSalary();
+                
+                updateSalaryScale();
+            }
+            
+            // البحث عن الدرجة المناسبة للرتبة الجديدة بناءً على الراتب السابق
+            function findOptimalDegreeBasedOnSalary() {
+                const oldRank = document.getElementById('old-rank').value;
+                const newRank = document.getElementById('new-rank').value;
+                const oldDegree = document.getElementById('old-degree').value;
+                
+                // التحقق من وجود العناصر قبل الوصول إليها
+                const oldSalaryElement = document.getElementById(`scale-${oldRank}-${oldDegree}`);
+                if (!oldSalaryElement) return; // التحقق من وجود العنصر
+                
+                const oldSalary = Number(oldSalaryElement.value);
+                
+                // البحث عن أقرب درجة في الرتبة الجديدة بحيث يكون راتبها ليس أقل من الراتب السابق
+                let foundDegree = 15; // نبدأ من أعلى درجة
+                for (let i = 15; i >= 1; i--) {
+                    const degreeElement = document.getElementById(`scale-${newRank}-${i}`);
+                    if (!degreeElement) continue;
+                    
+                    const newSalary = Number(degreeElement.value);
+                    if (newSalary >= oldSalary) {
+                        foundDegree = i;
+                    }
+                }
+                
+                // تحديث الدرجة الحالية
+                document.getElementById('new-degree').value = foundDegree.toString();
+            }
+            
+            // تحديث سلم الرواتب عند تغيير الرتبة
+            function updateSalaryScale() {
+                const oldRank = document.getElementById('old-rank').value;
+                const newRank = document.getElementById('new-rank').value;
+                const oldDegree = document.getElementById('old-degree').value;
+                const newDegree = document.getElementById('new-degree').value;
+                
+                // التحقق من وجود العناصر قبل الوصول إليها
+                const oldSalaryElement = document.getElementById(`scale-${oldRank}-${oldDegree}`);
+                const newSalaryElement = document.getElementById(`scale-${newRank}-${newDegree}`);
+                
+                if (!oldSalaryElement || !newSalaryElement) {
+                    console.error("بعض عناصر سلم الرواتب غير موجودة");
+                    return;
+                }
+                
+                // جلب البيانات من سلم الرواتب
+                const oldSalary = oldSalaryElement.value;
+                const newSalary = newSalaryElement.value;
+                
+                // تحديث قيم الراتب الأساسي
+                document.getElementById('old-basic-salary').value = oldSalary;
+                document.getElementById('new-basic-salary').value = newSalary;
+                
+                // حساب العلاوات
+                calculateAllowances();
+            }
+            
+            // حساب العلاوات - محدثة
+            function calculateAllowances() {
+                const oldRank = document.getElementById('old-rank').value;
+                const newRank = document.getElementById('new-rank').value;
+                const oldBasicSalary = Number(document.getElementById('old-basic-salary').value) || 0;
+                const newBasicSalary = Number(document.getElementById('new-basic-salary').value) || 0;
+                
+                // الحصول على راتب الدرجة الأولى للرتبة السابقة والحالية
+                const oldRankFirstDegreeElement = document.getElementById(`scale-${oldRank}-1`);
+                const newRankFirstDegreeElement = document.getElementById(`scale-${newRank}-1`);
+                
+                if (!oldRankFirstDegreeElement || !newRankFirstDegreeElement) {
+                    console.error("لا يمكن العثور على عناصر راتب الدرجة الأولى");
+                    return;
+                }
+                
+                const oldRankFirstDegreeSalary = Number(oldRankFirstDegreeElement.value) || 0;
+                const newRankFirstDegreeSalary = Number(newRankFirstDegreeElement.value) || 0;
+                
+                // تحديث بدل مكافحة الإرهاب فقط إذا كان وضع الحساب تلقائيًا
+                if (allowanceCalculationMode.terrorism === 'auto') {
+                    const oldTerrorismValue = parseFloat((oldRankFirstDegreeSalary * 0.25).toFixed(2));
+                    const newTerrorismValue = parseFloat((newRankFirstDegreeSalary * 0.25).toFixed(2));
+                    
+                    const oldTerrorismElement = document.getElementById('old-terrorism');
+                    const newTerrorismElement = document.getElementById('new-terrorism');
+                    
+                    if (oldTerrorismElement && newTerrorismElement) {
+                        oldTerrorismElement.value = oldTerrorismValue;
+                        newTerrorismElement.value = newTerrorismValue;
+                    }
+                }
+                
+                // تحديث علاوة الأمن فقط إذا كان وضع الحساب تلقائيًا
+                if (allowanceCalculationMode.security === 'auto') {
+                    const oldSecurityValue = parseFloat((oldBasicSalary * 0.25).toFixed(2));
+                    const newSecurityValue = parseFloat((newBasicSalary * 0.25).toFixed(2));
+                    
+                    const oldSecurityElement = document.getElementById('old-security');
+                    const newSecurityElement = document.getElementById('new-security');
+                    
+                    if (oldSecurityElement && newSecurityElement) {
+                        oldSecurityElement.value = oldSecurityValue;
+                        newSecurityElement.value = newSecurityValue;
+                    }
+                }
+                
+                // حساب التقاعد (9%) تلقائيًا من الراتب الأساسي - فقط إذا كان وضع الحساب تلقائيًا
+                if (allowanceCalculationMode.retirement === 'auto') {
+                    const oldRetirementValue = parseFloat((oldBasicSalary * 0.09).toFixed(2));
+                    const newRetirementValue = parseFloat((newBasicSalary * 0.09).toFixed(2));
+                    
+                    const oldRetirementElement = document.getElementById('old-retirement');
+                    const newRetirementElement = document.getElementById('new-retirement');
+                    
+                    if (oldRetirementElement && newRetirementElement) {
+                        oldRetirementElement.value = oldRetirementValue;
+                        newRetirementElement.value = newRetirementValue;
+                    }
+                }
+            }
+            
+            // دالة للتبديل بين الحساب التلقائي واليدوي للبدلات
+            function toggleAllowanceCalculation(allowanceType) {
+                const oldInputId = `old-${allowanceType}`;
+                const newInputId = `new-${allowanceType}`;
+                const statusId = `${allowanceType}-calc-status`;
+                const buttonId = `toggle-${allowanceType}-calc`;
+                
+                const oldInput = document.getElementById(oldInputId);
+                const newInput = document.getElementById(newInputId);
+                const statusElement = document.getElementById(statusId);
+                const buttonElement = document.getElementById(buttonId);
+                
+                if (!oldInput || !newInput || !statusElement || !buttonElement) return;
+                
+                // تبديل الحالة
+                if (allowanceCalculationMode[allowanceType] === 'auto') {
+                    allowanceCalculationMode[allowanceType] = 'manual';
+                    statusElement.textContent = 'يدوي';
+                    buttonElement.classList.remove('bg-blue-100', 'dark:bg-blue-900', 'text-blue-700', 'dark:text-blue-300');
+                    buttonElement.classList.add('bg-yellow-100', 'dark:bg-yellow-900', 'text-yellow-700', 'dark:text-yellow-300');
+                    
+                    // تحديث الإعدادات
+                    appSettings.calculation[`auto${allowanceType.charAt(0).toUpperCase() + allowanceType.slice(1)}`] = false;
+                } else {
+                    allowanceCalculationMode[allowanceType] = 'auto';
+                    statusElement.textContent = 'تلقائي';
+                    buttonElement.classList.remove('bg-yellow-100', 'dark:bg-yellow-900', 'text-yellow-700', 'dark:text-yellow-300');
+                    buttonElement.classList.add('bg-blue-100', 'dark:bg-blue-900', 'text-blue-700', 'dark:text-blue-300');
+                    
+                    // تحديث الإعدادات
+                    appSettings.calculation[`auto${allowanceType.charAt(0).toUpperCase() + allowanceType.slice(1)}`] = true;
+                    
+                    // إعادة حساب البدل تلقائيًا
+                    calculateAllowances();
+                }
+                
+                // حفظ الإعدادات بعد التعديل
+                saveSettings();
+            }
+            
+            // إعادة حساب جميع البدلات عند تغيير الراتب الأساسي
+            function recalculateAllowances(type) {
+                if (type === 'old') {
+                    const oldBasicSalary = Number(document.getElementById('old-basic-salary').value) || 0;
+                    
+                    // تحديث مبلغ التقاعد تلقائيًا
+                    if (allowanceCalculationMode.retirement === 'auto') {
+                        const oldRetirementElement = document.getElementById('old-retirement');
+                        if (oldRetirementElement) {
+                            oldRetirementElement.value = parseFloat((oldBasicSalary * 0.09).toFixed(2));
+                        }
+                    }
+                    
+                    // تحديث علاوة الأمن (شرطة عسكرية) تلقائيًا
+                    if (allowanceCalculationMode.security === 'auto') {
+                        const oldSecurityElement = document.getElementById('old-security');
+                        if (oldSecurityElement) {
+                            oldSecurityElement.value = parseFloat((oldBasicSalary * 0.25).toFixed(2));
+                        }
+                    }
+                    
+                    // البحث عن الدرجة المقابلة للراتب
+                    const oldRank = document.getElementById('old-rank').value;
+                    const oldDegreeElement = document.getElementById('old-degree');
+                    
+                    if (oldDegreeElement) {
+                        for (let i = 1; i <= 15; i++) {
+                            const salaryElement = document.getElementById(`scale-${oldRank}-${i}`);
+                            if (salaryElement && Number(salaryElement.value) === oldBasicSalary) {
+                                oldDegreeElement.value = i.toString();
+                                break;
+                            }
+                        }
+                    }
+                } else if (type === 'new') {
+                    const newBasicSalary = Number(document.getElementById('new-basic-salary').value) || 0;
+                    
+                    // تحديث مبلغ التقاعد تلقائيًا
+                    if (allowanceCalculationMode.retirement === 'auto') {
+                        const newRetirementElement = document.getElementById('new-retirement');
+                        if (newRetirementElement) {
+                            newRetirementElement.value = parseFloat((newBasicSalary * 0.09).toFixed(2));
+                        }
+                    }
+                    
+                    // تحديث علاوة الأمن (شرطة عسكرية) تلقائيًا
+                    if (allowanceCalculationMode.security === 'auto') {
+                        const newSecurityElement = document.getElementById('new-security');
+                        if (newSecurityElement) {
+                            newSecurityElement.value = parseFloat((newBasicSalary * 0.25).toFixed(2));
+                        }
+                    }
+                    
+                    // البحث عن الدرجة المقابلة للراتب
+                    const newRank = document.getElementById('new-rank').value;
+                    const newDegreeElement = document.getElementById('new-degree');
+                    
+                    if (newDegreeElement) {
+                        for (let i = 1; i <= 15; i++) {
+                            const salaryElement = document.getElementById(`scale-${newRank}-${i}`);
+                            if (salaryElement && Number(salaryElement.value) === newBasicSalary) {
+                                newDegreeElement.value = i.toString();
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // إظهار نافذة إضافة بدل جديد
+            function showAddAllowanceModal() {
+                const modal = document.getElementById('add-allowance-modal');
+                if (modal) modal.classList.remove('hidden');
+                
+                // إعادة تعيين حقول النافذة
+                const allowanceNameInput = document.getElementById('allowance-name');
+                const allowanceTypeSelect = document.getElementById('allowance-type');
+                const percentageInput = document.getElementById('allowance-percentage');
+                const oldAmountInput = document.getElementById('allowance-amount-old');
+                const newAmountInput = document.getElementById('allowance-amount-new');
+                
+                if (allowanceNameInput) allowanceNameInput.value = '';
+                if (allowanceTypeSelect) allowanceTypeSelect.value = 'first-degree';
+                if (percentageInput) percentageInput.value = '25';
+                if (oldAmountInput) oldAmountInput.value = '';
+                if (newAmountInput) newAmountInput.value = '';
+                
+                // تحديث حقول نوع البدل
+                updateAllowanceTypeFields();
+            }
+            
+            // إخفاء نافذة إضافة بدل جديد
+            function hideAddAllowanceModal() {
+                const modal = document.getElementById('add-allowance-modal');
+                if (modal) modal.classList.add('hidden');
+            }
+            
+            // تحديث حقول نافذة إضافة بدل جديد بناءً على نوع البدل المختار
+            function updateAllowanceTypeFields() {
+                const allowanceType = document.getElementById('allowance-type').value;
+                const percentageContainer = document.getElementById('percentage-container');
+                const fixedAmountContainer = document.getElementById('fixed-amount-container');
+                const customSearchContainer = document.getElementById('custom-search-container');
+                const allowanceTypeDescription = document.getElementById('allowance-type-description');
+                
+                if (!percentageContainer || !fixedAmountContainer || !customSearchContainer || !allowanceTypeDescription) return;
+                
+                // إخفاء كل الحقول
+                percentageContainer.classList.add('hidden');
+                fixedAmountContainer.classList.add('hidden');
+                customSearchContainer.classList.add('hidden');
+                
+                // إظهار الحقول المناسبة حسب نوع البدل
+                if (allowanceType === 'first-degree') {
+                    percentageContainer.classList.remove('hidden');
+                    allowanceTypeDescription.textContent = 'يتم حساب البدل كنسبة من راتب الدرجة الأولى للرتبة (مثل بدل مكافحة الإرهاب)';
+                } else if (allowanceType === 'current-degree') {
+                    percentageContainer.classList.remove('hidden');
+                    allowanceTypeDescription.textContent = 'يتم حساب البدل كنسبة من راتب الدرجة الحالية للرتبة (مثل علاوة الأمن)';
+                } else if (allowanceType === 'fixed') {
+                    fixedAmountContainer.classList.remove('hidden');
+                    allowanceTypeDescription.textContent = 'يتم إدخال مبلغ ثابت للبدل (مثل بدل النقل)';
+                } else if (allowanceType === 'custom') {
+                    customSearchContainer.classList.remove('hidden');
+                    allowanceTypeDescription.textContent = 'يتم البحث عن البدل بناءً على معايير البحث المخصصة';
+                }
+            }
+            
+            // معاينة نتائج البحث المخصص
+            function previewCustomSearch() {
+                const oldRank = document.getElementById('old-rank').value;
+                const newRank = document.getElementById('new-rank').value;
+                const oldDegree = document.getElementById('old-degree').value;
+                const newDegree = document.getElementById('new-degree').value;
+                
+                // البحث عن رتبة ودرجة البدل السابق
+                const searchRankOldSelect = document.getElementById('search-rank-old');
+                const searchDegreeOldSelect = document.getElementById('search-degree-old');
+                
+                if (!searchRankOldSelect || !searchDegreeOldSelect) {
+                    console.error("لم يتم العثور على عناصر البحث المخصص");
+                    return;
+                }
+                
+                let searchRankOld = searchRankOldSelect.value;
+                let searchDegreeOld = searchDegreeOldSelect.value;
+                
+                // إذا كانت الرتبة هي "نفس الرتبة السابقة" أو "نفس الرتبة الحالية"
+                if (searchRankOld === 'old-rank') {
+                    searchRankOld = oldRank;
+                } else if (searchRankOld === 'new-rank') {
+                    searchRankOld = newRank;
+                }
+                
+                // إذا كانت الدرجة هي "نفس الدرجة السابقة"
+                if (searchDegreeOld === 'old-degree') {
+                    searchDegreeOld = oldDegree;
+                }
+                
+                // البحث عن رتبة ودرجة البدل الحالي
+                const searchRankNewSelect = document.getElementById('search-rank-new');
+                const searchDegreeNewSelect = document.getElementById('search-degree-new');
+                
+                if (!searchRankNewSelect || !searchDegreeNewSelect) {
+                    console.error("لم يتم العثور على عناصر البحث المخصص");
+                    return;
+                }
+                
+                let searchRankNew = searchRankNewSelect.value;
+                let searchDegreeNew = searchDegreeNewSelect.value;
+                
+                // إذا كانت الرتبة هي "نفس الرتبة السابقة" أو "نفس الرتبة الحالية"
+                if (searchRankNew === 'old-rank') {
+                    searchRankNew = oldRank;
+                } else if (searchRankNew === 'new-rank') {
+                    searchRankNew = newRank;
+                }
+                
+                // إذا كانت الدرجة هي "نفس الدرجة الحالية"
+                if (searchDegreeNew === 'new-degree') {
+                    searchDegreeNew = newDegree;
+                }
+                
+                // البحث عن القيم في سلم الرواتب
+                const oldScaleElement = document.getElementById(`scale-${searchRankOld}-${searchDegreeOld}`);
+                const newScaleElement = document.getElementById(`scale-${searchRankNew}-${searchDegreeNew}`);
+                
+                const previewOldAmountElement = document.getElementById('preview-old-amount');
+                const previewNewAmountElement = document.getElementById('preview-new-amount');
+                
+                if (!previewOldAmountElement || !previewNewAmountElement) {
+                    console.error("لم يتم العثور على عناصر معاينة البحث");
+                    return;
+                }
+                
+                // التحقق من وجود العناصر
+                if (oldScaleElement) {
+                    const oldValue = Number(oldScaleElement.value) || 0;
+                    // تطبيق النسبة المئوية
+                    const percentageElement = document.getElementById('allowance-custom-percentage');
+                    const percentage = percentageElement ? (Number(percentageElement.value) || 100) : 100;
+                    
+                    previewOldAmountElement.textContent = Math.round(oldValue * percentage / 100).toString();
+                } else {
+                    previewOldAmountElement.textContent = "غير موجود";
+                }
+                
+                if (newScaleElement) {
+                    const newValue = Number(newScaleElement.value) || 0;
+                    // تطبيق النسبة المئوية
+                    const percentageElement = document.getElementById('allowance-custom-percentage');
+                    const percentage = percentageElement ? (Number(percentageElement.value) || 100) : 100;
+                    
+                    previewNewAmountElement.textContent = Math.round(newValue * percentage / 100).toString();
+                } else {
+                    previewNewAmountElement.textContent = "غير موجود";
+                }
+            }
+            
+            // إضافة بدل جديد
+            function addNewAllowance() {
+                const allowanceNameInput = document.getElementById('allowance-name');
+                const allowanceTypeSelect = document.getElementById('allowance-type');
+                
+                if (!allowanceNameInput || !allowanceTypeSelect) {
+                    console.error("لم يتم العثور على عناصر إضافة البدل");
+                    return;
+                }
+                
+                const allowanceName = allowanceNameInput.value.trim();
+                const allowanceType = allowanceTypeSelect.value;
+                
+                if (!allowanceName) {
+                    alert('يرجى إدخال اسم البدل');
+                    return;
+                }
+                
+                let oldValue = 0;
+                let newValue = 0;
+                
+                if (allowanceType === 'fixed') {
+                    const oldAmountInput = document.getElementById('allowance-amount-old');
+                    const newAmountInput = document.getElementById('allowance-amount-new');
+                    
+                    if (oldAmountInput && newAmountInput) {
+                        oldValue = Number(oldAmountInput.value) || 0;
+                        newValue = Number(newAmountInput.value) || 0;
+                    }
+                } else if (allowanceType === 'custom') {
+                    // استخدام البحث المخصص
+                    const oldRank = document.getElementById('old-rank').value;
+                    const newRank = document.getElementById('new-rank').value;
+                    const oldDegree = document.getElementById('old-degree').value;
+                    const newDegree = document.getElementById('new-degree').value;
+                    
+                    // البحث عن رتبة ودرجة البدل السابق
+                    const searchRankOldSelect = document.getElementById('search-rank-old');
+                    const searchDegreeOldSelect = document.getElementById('search-degree-old');
+                    
+                    if (!searchRankOldSelect || !searchDegreeOldSelect) {
+                        console.error("لم يتم العثور على عناصر البحث المخصص");
+                        return;
+                    }
+                    
+                    let searchRankOld = searchRankOldSelect.value;
+                    let searchDegreeOld = searchDegreeOldSelect.value;
+                    
+                    // إذا كانت الرتبة هي "نفس الرتبة السابقة" أو "نفس الرتبة الحالية"
+                    if (searchRankOld === 'old-rank') {
+                        searchRankOld = oldRank;
+                    } else if (searchRankOld === 'new-rank') {
+                        searchRankOld = newRank;
+                    }
+                    
+                    // إذا كانت الدرجة هي "نفس الدرجة السابقة"
+                    if (searchDegreeOld === 'old-degree') {
+                        searchDegreeOld = oldDegree;
+                    }
+                    
+                    // البحث عن رتبة ودرجة البدل الحالي
+                    const searchRankNewSelect = document.getElementById('search-rank-new');
+                    const searchDegreeNewSelect = document.getElementById('search-degree-new');
+                    
+                    if (!searchRankNewSelect || !searchDegreeNewSelect) {
+                        console.error("لم يتم العثور على عناصر البحث المخصص");
+                        return;
+                    }
+                    
+                    let searchRankNew = searchRankNewSelect.value;
+                    let searchDegreeNew = searchDegreeNewSelect.value;
+                    
+                    // إذا كانت الرتبة هي "نفس الرتبة السابقة" أو "نفس الرتبة الحالية"
+                    if (searchRankNew === 'old-rank') {
+                        searchRankNew = oldRank;
+                    } else if (searchRankNew === 'new-rank') {
+                        searchRankNew = newRank;
+                    }
+                    
+                    // إذا كانت الدرجة هي "نفس الدرجة الحالية"
+                    if (searchDegreeNew === 'new-degree') {
+                        searchDegreeNew = newDegree;
+                    }
+                    
+                    // البحث عن القيم في سلم الرواتب
+                    const oldScaleElement = document.getElementById(`scale-${searchRankOld}-${searchDegreeOld}`);
+                    const newScaleElement = document.getElementById(`scale-${searchRankNew}-${searchDegreeNew}`);
+                    
+                    // التحقق من وجود العناصر
+                    if (oldScaleElement) {
+                        oldValue = Number(oldScaleElement.value) || 0;
+                    }
+                    
+                    if (newScaleElement) {
+                        newValue = Number(newScaleElement.value) || 0;
+                    }
+                    
+                    // تطبيق النسبة المئوية
+                    const percentageElement = document.getElementById('allowance-custom-percentage');
+                    const percentage = percentageElement ? (Number(percentageElement.value) || 100) : 100;
+                    
+                    oldValue = Math.round(oldValue * percentage / 100);
+                    newValue = Math.round(newValue * percentage / 100);
+                    
+                } else {
+                    const percentageInput = document.getElementById('allowance-percentage');
+                    if (!percentageInput) {
+                        console.error("لم يتم العثور على عنصر النسبة المئوية");
+                        return;
+                    }
+                    
+                    const percentage = Number(percentageInput.value) || 0;
+                    const oldRank = document.getElementById('old-rank').value;
+                    const newRank = document.getElementById('new-rank').value;
+                    
+                    if (allowanceType === 'first-degree') {
+                        // نسبة من راتب الدرجة الأولى
+                        const oldRankFirstDegreeElement = document.getElementById(`scale-${oldRank}-1`);
+                        const newRankFirstDegreeElement = document.getElementById(`scale-${newRank}-1`);
+                        
+                        if (oldRankFirstDegreeElement && newRankFirstDegreeElement) {
+                            const oldRankFirstDegreeSalary = Number(oldRankFirstDegreeElement.value) || 0;
+                            const newRankFirstDegreeSalary = Number(newRankFirstDegreeElement.value) || 0;
+                            
+                            oldValue = Math.round(oldRankFirstDegreeSalary * (percentage / 100));
+                            newValue = Math.round(newRankFirstDegreeSalary * (percentage / 100));
+                        }
+                    } else {
+                        // نسبة من راتب الدرجة الحالية
+                        const oldBasicSalaryInput = document.getElementById('old-basic-salary');
+                        const newBasicSalaryInput = document.getElementById('new-basic-salary');
+                        
+                        if (oldBasicSalaryInput && newBasicSalaryInput) {
+                            const oldBasicSalary = Number(oldBasicSalaryInput.value) || 0;
+                            const newBasicSalary = Number(newBasicSalaryInput.value) || 0;
+                            
+                            oldValue = Math.round(oldBasicSalary * (percentage / 100));
+                            newValue = Math.round(newBasicSalary * (percentage / 100));
+                        }
+                    }
+                }
+                
+                // إضافة البدل إلى الجدول مع زر حذف
+                const tableBody = document.querySelector('#allowances-table tbody');
+                if (!tableBody) {
+                    console.error("لم يتم العثور على جدول البدلات");
+                    return;
+                }
+                
+                const allowanceId = Date.now().toString();
+                const newRow = document.createElement('tr');
+                newRow.setAttribute('data-row-id', allowanceId);
+                newRow.setAttribute('data-type', 'allowance');
+                
+                // التحقق مما إذا كان يجب إظهار زر الحذف
+                const showDeleteButton = document.getElementById('change-type').value !== 'ترقية';
+                
+                newRow.innerHTML = `
+                    <td class="relative">
+                        ${allowanceName}
+                    </td>
+                    <td><input type="number" id="old-${allowanceId}" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" value="${oldValue}" min="0"></td>
+                    <td><input type="number" id="new-${allowanceId}" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" value="${newValue}" min="0"></td>
+                    <td class="delete-column" style="display: ${showDeleteButton ? 'table-cell' : 'none'};">
+                        <span class="delete-row-btn" onclick="hideRow('${allowanceId}')">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </span>
+                    </td>
+                `;
+                tableBody.appendChild(newRow);
+                
+                // تخزين البدل للاستخدام لاحقًا
+                customAllowances.push({
+                    id: allowanceId,
+                    name: allowanceName,
+                    type: allowanceType,
+                    percentage: allowanceType !== 'fixed' ? (Number(document.getElementById('allowance-percentage')?.value) || 0) : 0
+                });
+                
+                hideAddAllowanceModal();
+            }
+            
+            // حساب الفروقات
+            function calculateDifferences() {
+                const nameInput = document.getElementById('name');
+                const generalNumberInput = document.getElementById('general-number');
+                const unitInput = document.getElementById('unit');
+                
+                if (!nameInput || !generalNumberInput || !unitInput) {
+                    console.error("لم يتم العثور على حقول البيانات الأساسية");
+                    return;
+                }
+                
+                const name = nameInput.value.trim();
+                const generalNumber = generalNumberInput.value.trim();
+                const unit = unitInput.value.trim();
+                
+                if (!name || !generalNumber || !unit) {
+                    alert('يرجى إدخال الاسم والرقم العام والوحدة');
+                    return;
+                }
+                
+                // الحصول على تواريخ الحسبة
+                const startDateInput = document.getElementById('start-date');
+                const endDateInput = document.getElementById('end-date');
+                
+                if (!startDateInput || !endDateInput) {
+                    console.error("لم يتم العثور على حقول التواريخ");
+                    return;
+                }
+                
+                const startDate = new Date(startDateInput.value);
+                const endDate = new Date(endDateInput.value);
+                
+                if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+                    alert('يرجى إدخال تاريخ بداية ونهاية الحسبة');
+                    return;
+                }
+                
+                // حساب عدد الأيام مع مراعاة قاعدة الـ 30 يومًا للشهر
+                // التحقق مما إذا كان تاريخ النهاية هو آخر يوم في الشهر
+                const isEndDateLastDayOfMonth = function(date) {
+                    // إنشاء نسخة من التاريخ واختبار ما إذا كان آخر يوم في الشهر
+                    const testDate = new Date(date.getTime());
+                    testDate.setDate(testDate.getDate() + 1);
+                    return testDate.getDate() === 1; // إذا كان اليوم التالي هو الأول من الشهر فهذا يعني أن التاريخ الحالي هو آخر يوم
+                };
+                
+                // حساب الفرق بالأشهر والأيام
+                let daysDiff;
+                
+                if (isEndDateLastDayOfMonth(endDate)) {
+                    // إذا كان تاريخ النهاية هو آخر يوم في الشهر، نستخدم حساب الأشهر
+                    
+                    // حساب عدد الأشهر الكاملة
+                    let months = (endDate.getFullYear() - startDate.getFullYear()) * 12 + (endDate.getMonth() - startDate.getMonth());
+                    
+                    // معالجة الأيام المتبقية في الشهر الأول
+                    if (startDate.getDate() !== 1) {
+                        // نحسب عدد الأيام المتبقية في الشهر الأول
+                        const daysInStartMonth = 30;
+                        const remainingDaysInStartMonth = daysInStartMonth - startDate.getDate() + 1;
+                        
+                        // إذا كان هناك أقل من شهر
+                        if (months === 0) {
+                            daysDiff = endDate.getDate() - startDate.getDate() + 1;
+                        } else {
+                            // نحسب عدد الأيام في الأشهر الكاملة زائد الأيام المتبقية في الشهر الأول
+                            daysDiff = (months - 1) * 30 + remainingDaysInStartMonth + endDate.getDate();
+                        }
+                    } else {
+                        // إذا كان تاريخ البداية هو الأول من الشهر، فالحساب يكون أبسط
+                        daysDiff = months * 30 + endDate.getDate() - startDate.getDate() + 1;
+                    }
+                } else {
+                    // في حالة عدم اختيار آخر يوم في الشهر، نستخدم الحساب العادي
+                    daysDiff = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1; // إضافة 1 لتضمين اليوم الأخير
+                }
+                
+                // إضافة عرض عدد الأيام المحسوبة وتفاصيل الحساب (للتوضيح)
+                console.log(`عدد الأيام المحسوبة: ${daysDiff}`);
+                
+                // إضافة تفاصيل الحساب للمستخدم
+                if (isEndDateLastDayOfMonth(endDate)) {
+                    const startDateEl = document.getElementById('start-date');
+                    if (startDateEl && startDateEl.parentNode && startDateEl.parentNode.parentNode) {
+                        // حذف أي عنصر معلومات سابق
+                        const existingInfo = document.querySelector('.days-info');
+                        if (existingInfo) existingInfo.remove();
+                        
+                        const daysInfo = document.createElement('div');
+                        daysInfo.className = 'p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md mt-2 text-sm days-info';
+                        daysInfo.innerHTML = `
+                            <div class="font-semibold mb-1">تفاصيل حساب الأيام (${daysDiff} يوم):</div>
+                            <div>• تاريخ البداية: ${startDate.toLocaleDateString('ar-SA')}</div>
+                            <div>• تاريخ النهاية: ${endDate.toLocaleDateString('ar-SA')} (آخر يوم في الشهر)</div>
+                            <div>• تم احتساب الشهر بـ 30 يوم حسب النظام</div>
+                        `;
+                        
+                        startDateEl.parentNode.parentNode.appendChild(daysInfo);
+                        
+                        // حذف العنصر بعد 10 ثوانٍ
+                        setTimeout(() => {
+                            daysInfo.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+                            setTimeout(() => daysInfo.remove(), 500);
+                        }, 10000);
+                    }
+                }
+                
+                // جمع معلومات الرتبة
+                const oldRankSelect = document.getElementById('old-rank');
+                const newRankSelect = document.getElementById('new-rank');
+                
+                if (!oldRankSelect || !newRankSelect) {
+                    console.error("لم يتم العثور على عناصر الرتبة");
+                    return;
+                }
+                
+                const oldRank = oldRankSelect.value;
+                const newRank = newRankSelect.value;
+                
+                // جمع جميع البدلات والحسميات (بما في ذلك المخفية) من الجداول
+                const allowances = [];
+                const deductions = [];
+                
+                // جمع الراتب الأساسي ومكافحة الإرهاب وعلاوة الأمن
+                const oldBasicSalary = Number(document.getElementById('old-basic-salary').value) || 0;
+                const newBasicSalary = Number(document.getElementById('new-basic-salary').value) || 0;
+                
+                const basicDiff = newBasicSalary - oldBasicSalary;
+                const basicDiffAmount = parseFloat(((basicDiff / 30) * daysDiff).toFixed(2));
+                
+                // إضافة الراتب الأساسي فقط إذا كان الصف غير مخفي
+                if (!hiddenRows.has('basic-salary')) {
+                    if (basicDiffAmount > 0) {
+                        allowances.push({
+                            type: "الراتب الأساسي",
+                            oldAmount: oldBasicSalary,
+                            newAmount: newBasicSalary,
+                            days: daysDiff,
+                            diffAmount: basicDiffAmount
+                        });
+                    } else if (basicDiffAmount < 0) {
+                        deductions.push({
+                            type: "الراتب الأساسي",
+                            oldAmount: oldBasicSalary,
+                            newAmount: newBasicSalary,
+                            days: daysDiff,
+                            diffAmount: Math.abs(basicDiffAmount)
+                        });
+                    }
+                }
+                
+                // إضافة بدل مكافحة الإرهاب إذا لم يكن مخفيًا
+                if (!hiddenRows.has('terrorism')) {
+                    const oldTerrorism = Number(document.getElementById('old-terrorism').value) || 0;
+                    const newTerrorism = Number(document.getElementById('new-terrorism').value) || 0;
+                    const terrorismDiff = newTerrorism - oldTerrorism;
+                    const terrorismDiffAmount = parseFloat(((terrorismDiff / 30) * daysDiff).toFixed(2));
+                    
+                    if (terrorismDiffAmount > 0) {
+                        allowances.push({
+                            type: "بدل مكافحة الإرهاب",
+                            oldAmount: oldTerrorism,
+                            newAmount: newTerrorism,
+                            days: daysDiff,
+                            diffAmount: terrorismDiffAmount
+                        });
+                    } else if (terrorismDiffAmount < 0) {
+                        deductions.push({
+                            type: "بدل مكافحة الإرهاب",
+                            oldAmount: oldTerrorism,
+                            newAmount: newTerrorism,
+                            days: daysDiff,
+                            diffAmount: Math.abs(terrorismDiffAmount)
+                        });
+                    }
+                }
+                
+                // إضافة علاوة الأمن إذا لم تكن مخفية
+                if (!hiddenRows.has('security')) {
+                    const oldSecurity = Number(document.getElementById('old-security').value) || 0;
+                    const newSecurity = Number(document.getElementById('new-security').value) || 0;
+                    const securityDiff = newSecurity - oldSecurity;
+                    const securityDiffAmount = parseFloat(((securityDiff / 30) * daysDiff).toFixed(2));
+                    
+                    if (securityDiffAmount > 0) {
+                        allowances.push({
+                            type: "علاوة الأمن (شرطة عسكرية)",
+                            oldAmount: oldSecurity,
+                            newAmount: newSecurity,
+                            days: daysDiff,
+                            diffAmount: securityDiffAmount
+                        });
+                    } else if (securityDiffAmount < 0) {
+                        deductions.push({
+                            type: "علاوة الأمن (شرطة عسكرية)",
+                            oldAmount: oldSecurity,
+                            newAmount: newSecurity,
+                            days: daysDiff,
+                            diffAmount: Math.abs(securityDiffAmount)
+                        });
+                    }
+                }
+                
+                // إضافة حسم التقاعد إذا لم يكن مخفيًا
+                if (!hiddenRows.has('retirement')) {
+                    const oldRetirement = Number(document.getElementById('old-retirement').value) || 0;
+                    const newRetirement = Number(document.getElementById('new-retirement').value) || 0;
+                    const retirementDiff = newRetirement - oldRetirement;
+                    const retirementDiffAmount = parseFloat(((retirementDiff / 30) * daysDiff).toFixed(2));
+                    
+                    if (retirementDiffAmount > 0) {
+                        deductions.push({
+                            type: "التقاعد",
+                            oldAmount: oldRetirement,
+                            newAmount: newRetirement,
+                            days: daysDiff,
+                            diffAmount: retirementDiffAmount
+                        });
+                    } else if (retirementDiffAmount < 0) {
+                        allowances.push({
+                            type: "التقاعد",
+                            oldAmount: oldRetirement,
+                            newAmount: newRetirement,
+                            days: daysDiff,
+                            diffAmount: Math.abs(retirementDiffAmount)
+                        });
+                    }
+                }
+                
+                // جمع البدلات المخصصة
+                document.querySelectorAll('#allowances-table tbody tr[data-allowance-id]').forEach(row => {
+                    if (row.style.display === 'none') return; // تجاهل الصفوف المخفية
+                    
+                    if (!row.cells || row.cells.length < 3) return;
+                    
+                    const name = row.cells[0].textContent.trim();
+                    const inputs = row.querySelectorAll('input');
+                    
+                    if (inputs.length < 2) return;
+                    
+                    const oldAmount = Number(inputs[0].value) || 0;
+                    const newAmount = Number(inputs[1].value) || 0;
+                    
+                    // حساب الفرق
+                    const diff = newAmount - oldAmount;
+                    const diffAmount = Math.round(((diff / 30) * daysDiff));
+                    
+                    // تصنيف البدل بناءً على الفرق
+                    if (diffAmount > 0) {
+                        allowances.push({
+                            type: name,
+                            oldAmount,
+                            newAmount,
+                            days: daysDiff,
+                            diffAmount: diffAmount
+                        });
+                    } else if (diffAmount < 0) {
+                        deductions.push({
+                            type: name,
+                            oldAmount,
+                            newAmount,
+                            days: daysDiff,
+                            diffAmount: Math.abs(diffAmount)
+                        });
+                    }
+                });
+                
+                // حساب إجمالي الفروقات والحسميات
+                let totalPositiveDiff = 0;
+                let totalNegativeDiff = 0;
+                
+                allowances.forEach(item => {
+                    totalPositiveDiff += item.diffAmount;
+                });
+                
+                deductions.forEach(item => {
+                    totalNegativeDiff += item.diffAmount;
+                });
+                
+                // حساب صافي الفروقات
+                const netDiff = totalPositiveDiff - totalNegativeDiff;
+                differenceTotal = netDiff;
+                
+                // تخزين النتائج للعرض لاحقًا
+                calculatedData = {
+                    name,
+                    generalNumber,
+                    idNumber: document.getElementById('id-number')?.value.trim() || '',
+                    unit,
+                    commencementDate: document.getElementById('commencement-date')?.value || '',
+                    startDate: startDateInput.value,
+                    endDate: endDateInput.value,
+                    oldRank,
+                    newRank,
+                    oldDegree: document.getElementById('old-degree')?.value || '1',
+                    newDegree: document.getElementById('new-degree')?.value || '1',
+                    daysDiff,
+                    differences: allowances,
+                    deductions: deductions,
+                    totalPositiveDiff,
+                    totalNegativeDiff,
+                    netDiff
+                };
 
+                // تبديل إلى نموذج فروقات الترقية
+                switchTab('forms');
+                previewDifferenceForm();
+            }
+            
+            // عرض نموذج فروقات الترقية - يعرض الصفوف الصفرية حسب الإعدادات
+            function previewDifferenceForm() {
+                if (!calculatedData.name) {
+                    alert('يرجى حساب الفروقات أولاً');
+                    return;
+                }
+
+                // إخفاء جميع النماذج
+                document.querySelectorAll('.preview-form').forEach(form => {
+                    if (form) form.classList.add('hidden');
+                });
+                
+                // عرض نموذج فروقات الترقية
+                const differenceForm = document.getElementById('difference-form');
+                if (!differenceForm) {
+                    console.error("لم يتم العثور على نموذج فروقات الترقية");
+                    return;
+                }
+                
+                differenceForm.classList.remove('hidden');
+                
+                try {
+                    // تحويل التواريخ باستخدام نفس آلية تاريخ المباشرة
+                    const startDate = new Date(calculatedData.startDate);
+                    const endDate = new Date(calculatedData.endDate);
+                    
+                    // استخدام toLocaleDateString لعرض التاريخ بالتنسيق العربي السعودي الرسمي
+                    const startDateFormatted = startDate.toLocaleDateString('ar-SA', { 
+                        year: 'numeric', 
+                        month: 'numeric', 
+                        day: 'numeric',
+                        calendar: 'islamic' 
+                    });
+                    
+                    const endDateFormatted = endDate.toLocaleDateString('ar-SA', { 
+                        year: 'numeric', 
+                        month: 'numeric', 
+                        day: 'numeric',
+                        calendar: 'islamic' 
+                    });
+                    
+                    // تحويل الرقم العام والسجل المدني إلى أرقام عربية
+                    const arabicGeneralNumber = toArabicNumbers(calculatedData.generalNumber);
+                    const arabicIdNumber = toArabicNumbers(calculatedData.idNumber);
+                    
+                    // التحقق من خيار إظهار الصفوف ذات القيمة صفر
+                    const showZeroRows = appSettings.display.showZeroRows;
+                    
+                    // بناء محتوى النموذج مع وضع التواريخ في منتصف الصفحة
+                    let htmlContent = `
+                        <div class="text-center font-bold text-xl mb-6" style="text-align: center !important; font-weight: bold !important;">فروقات ترقية</div>
+                        
+                        <table class="print-table">
+                            <tr>
+                                <th>الاسم</th>
+                                <th>الرتبة</th>
+                                <th>الرقم العام</th>
+                                <th>تاريخ المباشرة</th>
+                                <th>الوحدة</th>
+                            </tr>
+                            <tr>
+                                <td>${calculatedData.name}</td>
+                                <td>${calculatedData.newRank}</td>
+                                <td>${arabicGeneralNumber}</td>
+                                <td>${calculatedData.commencementDate ? new Date(calculatedData.commencementDate).toLocaleDateString('ar-SA', { calendar: 'islamic' }) : '-'}</td>
+                                <td>${calculatedData.unit}</td>
+                            </tr>
+                        </table>
+                        
+                        <div class="text-center my-4 font-bold" style="text-align: center !important; font-weight: bold !important; width: 100%; display: block;">
+                            من تاريخ: ${startDateFormatted} إلى تاريخ: ${endDateFormatted}
+                        </div>
+                        
+                        <table class="print-table">
+                            <tr>
+                                <th>م</th>
+                                <th>نوع الفرق</th>
+                                <th>المبلغ السابق</th>
+                                <th>المبلغ الحالي</th>
+                                <th>عدد أيام الفرق</th>
+                                <th>مبلغ الفرق</th>
+                            </tr>
+                            ${calculatedData.differences.map((diff, index) => `
+                                <tr class="${diff.diffAmount === 0 ? (showZeroRows ? '' : 'hidden print:table-row') : ''}">
+                                    <td>${toArabicNumbers(index + 1)}</td>
+                                    <td>${diff.type}</td>
+                                    <td>${diff.oldAmount.toLocaleString('ar-SA')}</td>
+                                    <td>${diff.newAmount.toLocaleString('ar-SA')}</td>
+                                    <td>${toArabicNumbers(diff.days)}</td>
+                                    <td>${diff.diffAmount.toLocaleString('ar-SA')}</td>
+                                </tr>
+                            `).join('')}`;
+                    
+                    // إضافة صف المجموع فقط إذا كان خيار العرض مفعل
+                    if (appSettings.display.showTotals) {
+                        htmlContent += `
+                            <tr>
+                                <td colspan="5" class="text-center font-bold">الإجمالي</td>
+                                <td class="font-bold">${calculatedData.totalPositiveDiff.toLocaleString('ar-SA')}</td>
+                            </tr>`;
+                    }
+                    
+                    htmlContent += `</table>
+                        
+                        <div class="text-center font-bold my-4" style="text-align: center !important; font-weight: bold !important; width: 100%; display: block;">الحسميات</div>
+                        
+                        <table class="print-table">
+                            <tr>
+                                <th>م</th>
+                                <th>نوع الحسم</th>
+                                <th>المبلغ السابق</th>
+                                <th>المبلغ الحالي</th>
+                                <th>عدد أيام الحسم</th>
+                                <th>مبلغ الحسم</th>
+                            </tr>
+                            ${calculatedData.deductions.map((ded, index) => `
+                                <tr class="${ded.diffAmount === 0 ? (showZeroRows ? '' : 'hidden print:table-row') : ''}">
+                                    <td>${toArabicNumbers(index + 1)}</td>
+                                    <td>${ded.type}</td>
+                                    <td>${ded.oldAmount.toLocaleString('ar-SA')}</td>
+                                    <td>${ded.newAmount.toLocaleString('ar-SA')}</td>
+                                    <td>${toArabicNumbers(ded.days)}</td>
+                                    <td>${ded.diffAmount.toLocaleString('ar-SA')}</td>
+                                </tr>
+                            `).join('')}`;
+                    
+                    // إضافة صف المجموع فقط إذا كان خيار العرض مفعل
+                    if (appSettings.display.showTotals) {
+                        htmlContent += `
+                            <tr>
+                                <td colspan="5" class="text-center font-bold">الإجمالي</td>
+                                <td class="font-bold">${calculatedData.totalNegativeDiff.toLocaleString('ar-SA')}</td>
+                            </tr>`;
+                    }
+                    
+                    htmlContent += `</table>
+                        
+                        <div class="text-center mt-6" style="text-align: center !important; width: 100%; display: block;">
+                            <div class="font-bold" style="font-weight: bold !important;">صافي المبلغ: ${calculatedData.netDiff.toLocaleString('ar-SA')} ريال</div>
+                        </div>
+                        
+                        <!-- زر التحكم بالإعدادات - يظهر فقط في واجهة المستخدم وليس عند الطباعة -->
+                        <div class="mt-6 mb-2 text-center no-print">
+                            <button id="toggle-settings-btn" class="px-3 py-1 text-sm bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded" onclick="switchTab('settings');">
+                                تعديل الإعدادات
+                            </button>
+                        </div>
+                    `;
+                    
+                    differenceForm.innerHTML = htmlContent;
+                    
+                    // تحديث النسخة المطبوعة
+                    const printDifferenceForm = document.getElementById('print-difference-form');
+                    if (printDifferenceForm) {
+                        // إزالة الأزرار من نسخة الطباعة
+                        const contentToPrint = htmlContent.replace(/<div class="mt-6 mb-2 text-center no-print">[\s\S]*?<\/div>/g, '');
+                        printDifferenceForm.innerHTML = contentToPrint;
+                    }
+                } catch (error) {
+                    console.error("خطأ في عرض نموذج فروقات الترقية:", error);
+                    differenceForm.innerHTML = `
+                        <div class="p-4 bg-red-100 text-red-700 rounded-md">
+                            <p class="font-bold">حدث خطأ أثناء عرض النموذج:</p>
+                            <p>${error.message}</p>
+                            <p>يرجى المحاولة مرة أخرى أو التحقق من البيانات المدخلة.</p>
+                        </div>
+                    `;
+                }
+            }
+            
+            // عرض نموذج عدم أسبقية الصرف
+            function previewDeclarationForm() {
+                if (!calculatedData.name) {
+                    alert('يرجى حساب الفروقات أولاً');
+                    return;
+                }
+                
+                // إخفاء جميع النماذج
+                document.querySelectorAll('.preview-form').forEach(form => {
+                    if (form) form.classList.add('hidden');
+                });
+                
+                // عرض نموذج عدم أسبقية الصرف
+                const declarationForm = document.getElementById('declaration-form');
+                if (!declarationForm) {
+                    console.error("لم يتم العثور على نموذج عدم أسبقية الصرف");
+                    return;
+                }
+                
+                declarationForm.classList.remove('hidden');
+                
+                try {
+                    // تحويل تاريخ المباشرة
+                    const commencementDate = calculatedData.commencementDate ? new Date(calculatedData.commencementDate) : null;
+                    
+                    // العنوان والمحتوى
+                    let htmlContent = `
+                        <div class="text-center font-bold text-xl mb-6">إقرار عدم أسبقية صرف</div>
+                        
+                        <div class="text-center mb-8">
+                            <p class="mb-2">أقر أنا/ ${calculatedData.name}</p>
+                            <p class="mb-2">رقم الهوية: ${calculatedData.idNumber ? toArabicNumbers(calculatedData.idNumber) : '_________________'}</p>
+                            <p class="mb-2">الرقم العام: ${toArabicNumbers(calculatedData.generalNumber)}</p>
+                            <p class="mb-2">الرتبة: ${calculatedData.newRank}</p>
+                            <p class="mb-2">الوحدة: ${calculatedData.unit}</p>
+                        </div>
+                        
+                        <div class="mb-8">
+                            <p class="mb-4">بأنه لم يسبق لي صرف فروقات مالية خاصة بترقيتي من رتبة ${calculatedData.oldRank} إلى رتبة ${calculatedData.newRank} اعتباراً من تاريخ ${commencementDate ? commencementDate.toLocaleDateString('ar-SA', { calendar: 'islamic' }) : '_________________'}</p>
+                            <p class="mb-4">وفي حال ثبت خلاف ذلك فإنني أتحمل كامل المسؤولية وإعادة المبالغ التي تم صرفها لي دون وجه حق.</p>
+                        </div>
+                        
+                        <div class="mt-12">
+                            <div class="flex justify-around">
+                                <div class="text-center">
+                                    <p class="font-bold mb-2">المقر بما فيه</p>
+                                    <p class="mb-1">الاسم: ${calculatedData.name}</p>
+                                    <p class="mb-1">التوقيع: _______________</p>
+                                    <p>التاريخ: _______________</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="font-bold mb-2">قائد الوحدة</p>
+                                    <p class="mb-1">الاسم: _______________</p>
+                                    <p class="mb-1">التوقيع: _______________</p>
+                                    <p>التاريخ: _______________</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    declarationForm.innerHTML = htmlContent;
+                    
+                    // تحديث النسخة المطبوعة
+                    const printDifferenceForm = document.getElementById('print-difference-form');
+                    if (printDifferenceForm) {
+                        printDifferenceForm.innerHTML = htmlContent;
+                    }
+                } catch (error) {
+                    console.error("خطأ في عرض نموذج عدم أسبقية الصرف:", error);
+                    declarationForm.innerHTML = `
+                        <div class="p-4 bg-red-100 text-red-700 rounded-md">
+                            <p class="font-bold">حدث خطأ أثناء عرض النموذج:</p>
+                            <p>${error.message}</p>
+                            <p>يرجى المحاولة مرة أخرى أو التحقق من البيانات المدخلة.</p>
+                        </div>
+                    `;
+                }
+            }
+            
+            // طباعة النموذج الحالي
+            function printCurrentForm() {
+                window.print();
+            }
+            
+            // تصدير النموذج الحالي كملف Word
+            function downloadAsWordDoc() {
+                alert('سيتم تطوير خاصية التصدير إلى Word قريبًا');
+            }
+            
+            // إضافة العسكري إلى القائمة
+            function addToList() {
+                if (!calculatedData.name) {
+                    alert('يرجى حساب الفروقات أولاً');
+                    return;
+                }
+                
+                // إضافة البيانات إلى القائمة
+                const person = {
+                    id: Date.now().toString(),
+                    name: calculatedData.name,
+                    generalNumber: calculatedData.generalNumber,
+                    unit: calculatedData.unit,
+                    rank: calculatedData.newRank,
+                    startDate: calculatedData.startDate,
+                    endDate: calculatedData.endDate,
+                    amount: calculatedData.netDiff
+                };
+                
+                peopleList.push(person);
+                
+                // حفظ القائمة في localStorage
+                savePeopleList();
+                
+                // تحديث عرض القائمة
+                updatePeopleTable();
+                
+                // عرض رسالة نجاح
+                alert(`تم إضافة ${calculatedData.name} إلى القائمة بنجاح`);
+                
+                // الانتقال إلى تبويب القائمة
+                switchTab('list');
+            }
+            
+            // تحديث عرض قائمة الأشخاص
+            function updatePeopleTable() {
+                const tableBody = document.querySelector('#people-table tbody');
+                if (!tableBody) return;
+                
+                // إفراغ الجدول
+                tableBody.innerHTML = '';
+                
+                // إذا كانت القائمة فارغة، عرض رسالة
+                if (peopleList.length === 0) {
+                    tableBody.innerHTML = `
+                        <tr class="text-center">
+                            <td colspan="8" class="border border-gray-300 dark:border-gray-600 p-4 text-gray-500 dark:text-gray-400">
+                                لا توجد بيانات. قم بإضافة أشخاص من شاشة إدخال البيانات.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                // ملء الجدول بالبيانات
+                peopleList.forEach(person => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="border border-gray-300 dark:border-gray-600 p-2">${person.name}</td>
+                        <td class="border border-gray-300 dark:border-gray-600 p-2">${person.generalNumber}</td>
+                        <td class="border border-gray-300 dark:border-gray-600 p-2">${person.unit}</td>
+                        <td class="border border-gray-300 dark:border-gray-600 p-2">${person.rank}</td>
+                        <td class="border border-gray-300 dark:border-gray-600 p-2">${new Date(person.startDate).toLocaleDateString()}</td>
+                        <td class="border border-gray-300 dark:border-gray-600 p-2">${new Date(person.endDate).toLocaleDateString()}</td>
+                        <td class="border border-gray-300 dark:border-gray-600 p-2">${person.amount.toLocaleString()}</td>
+                        <td class="border border-gray-300 dark:border-gray-600 p-2">
+                            <button class="text-blue-600 hover:text-blue-800 mr-2" onclick="loadPersonData('${person.id}')">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </button>
+                            <button class="text-red-600 hover:text-red-800" onclick="deletePersonFromList('${person.id}')">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+            
+            // حذف شخص من القائمة
+            function deletePersonFromList(personId) {
+                if (!confirm('هل أنت متأكد من حذف هذا الشخص من القائمة؟')) return;
+                
+                const personIndex = peopleList.findIndex(person => person.id === personId);
+                if (personIndex !== -1) {
+                    peopleList.splice(personIndex, 1);
+                    
+                    // حفظ القائمة في localStorage
+                    savePeopleList();
+                    
+                    // تحديث عرض القائمة
+                    updatePeopleTable();
+                }
+            }
+            
+            // تحميل بيانات شخص من القائمة
+            function loadPersonData(personId) {
+                const person = peopleList.find(p => p.id === personId);
+                if (!person) return;
+                
+                // تعبئة نموذج البيانات بالبيانات المحفوظة
+                document.getElementById('name').value = person.name;
+                document.getElementById('general-number').value = person.generalNumber;
+                document.getElementById('unit').value = person.unit;
+                document.getElementById('start-date').value = person.startDate;
+                document.getElementById('end-date').value = person.endDate;
+                
+                // الانتقال إلى تبويب إدخال البيانات
+                switchTab('data');
+            }
+            
+            // حفظ قائمة الأشخاص في localStorage
+            function savePeopleList() {
+                try {
+                    localStorage.setItem('peopleList', JSON.stringify(peopleList));
+                } catch (error) {
+                    console.error('خطأ في حفظ القائمة:', error);
+                }
+            }
+            
+            // تحميل قائمة الأشخاص من localStorage
+            function loadPeopleList() {
+                try {
+                    const savedList = localStorage.getItem('peopleList');
+                    if (savedList) {
+                        peopleList = JSON.parse(savedList);
+                        updatePeopleTable();
+                    }
+                } catch (error) {
+                    console.error('خطأ في تحميل القائمة:', error);
+                }
+            }
+            
+            // حفظ سلم الرواتب في localStorage
+            function saveSalaryScale() {
+                try {
+                    const ranks = ["جندي", "جندي أول", "عريف", "وكيل رقيب", "رقيب", "رقيب أول", "رئيس رقباء", "ملازم"];
+                    const salaryScale = {};
+                    
+                    // جمع قيم سلم الرواتب
+                    ranks.forEach(rank => {
+                        salaryScale[rank] = {};
+                        for (let degree = 1; degree <= 15; degree++) {
+                            const element = document.getElementById(`scale-${rank}-${degree}`);
+                            if (element) {
+                                salaryScale[rank][degree] = Number(element.value) || 0;
+                            }
+                        }
+                    });
+                    
+                    localStorage.setItem('salaryScale', JSON.stringify(salaryScale));
+                    alert('تم حفظ سلم الرواتب بنجاح');
+                } catch (error) {
+                    console.error('خطأ في حفظ سلم الرواتب:', error);
+                    alert('حدث خطأ أثناء حفظ سلم الرواتب');
+                }
+            }
+            
+            // تحميل سلم الرواتب من localStorage
+            function loadSalaryScale() {
+                try {
+                    const savedScale = localStorage.getItem('salaryScale');
+                    if (savedScale) {
+                        const salaryScale = JSON.parse(savedScale);
+                        
+                        // تعبئة قيم سلم الرواتب
+                        for (const rank in salaryScale) {
+                            for (const degree in salaryScale[rank]) {
+                                const element = document.getElementById(`scale-${rank}-${degree}`);
+                                if (element) {
+                                    element.value = salaryScale[rank][degree];
+                                }
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('خطأ في تحميل سلم الرواتب:', error);
+                }
+            }
+            
+            // تحديث إعدادات العرض
+            function toggleDisplaySetting(settingName, value) {
+                if (settingName === 'showZeroRows') {
+                    appSettings.display.showZeroRows = value;
+                    
+                    // تحديث التبديل في صفحة الإعدادات أيضًا
+                    const settingsToggle = document.getElementById('settings-show-zero-rows');
+                    if (settingsToggle) settingsToggle.checked = value;
+                } else if (settingName === 'showTotals') {
+                    appSettings.display.showTotals = value;
+                    
+                    // تحديث التبديل في صفحة الإعدادات أيضًا
+                    const settingsToggle = document.getElementById('settings-show-totals');
+                    if (settingsToggle) settingsToggle.checked = value;
+                }
+                
+                // إعادة عرض النموذج الحالي
+                if (document.getElementById('difference-form').classList.contains('hidden')) {
+                    previewDeclarationForm();
+                } else {
+                    previewDifferenceForm();
+                }
+                
+                // حفظ الإعدادات
+                saveSettings();
+            }
+            
+            // تحديث إعدادات الحساب التلقائي
+            function updateCalculationSetting(settingType, value) {
+                // تحديث الإعدادات
+                if (settingType === 'terrorism') {
+                    appSettings.calculation.autoTerrorism = value;
+                    allowanceCalculationMode.terrorism = value ? 'auto' : 'manual';
+                } else if (settingType === 'security') {
+                    appSettings.calculation.autoSecurity = value;
+                    allowanceCalculationMode.security = value ? 'auto' : 'manual';
+                } else if (settingType === 'retirement') {
+                    appSettings.calculation.autoRetirement = value;
+                    allowanceCalculationMode.retirement = value ? 'auto' : 'manual';
+                }
+                
+                // تحديث حالة الأزرار
+                setInitialToggleButtonsState();
+                
+                // إعادة حساب العلاوات إذا كانت تلقائية
+                calculateAllowances();
+                
+                // حفظ الإعدادات
+                saveSettings();
+            }
+            
+            // تحديث إعدادات النظام
+            function updateSetting(category, name, value) {
+                if (category === 'display') {
+                    appSettings.display[name] = value;
+                } else if (category === 'calculation') {
+                    appSettings.calculation[name] = value;
+                } else if (category === 'defaults') {
+                    appSettings.defaults[name] = value;
+                    
+                    // تطبيق الإعدادات الافتراضية
+                    if (name === 'unit') {
+                        document.getElementById('unit').value = value;
+                    }
+                }
+            }
+            
+            // حفظ إعدادات النظام
+            function saveSettings() {
+                try {
+                    localStorage.setItem('appSettings', JSON.stringify(appSettings));
+                } catch (error) {
+                    console.error('خطأ في حفظ الإعدادات:', error);
+                }
+            }
+            
+            // تحميل إعدادات النظام
+            function loadSettings() {
+                try {
+                    const savedSettings = localStorage.getItem('appSettings');
+                    if (savedSettings) {
+                        const settings = JSON.parse(savedSettings);
+                        
+                        // دمج الإعدادات المحفوظة مع الإعدادات الافتراضية
+                        if (settings.display) Object.assign(appSettings.display, settings.display);
+                        if (settings.calculation) Object.assign(appSettings.calculation, settings.calculation);
+                        if (settings.defaults) Object.assign(appSettings.defaults, settings.defaults);
+                        
+                        // تطبيق الإعدادات
+                        document.getElementById('settings-show-zero-rows').checked = appSettings.display.showZeroRows;
+                        document.getElementById('settings-show-totals').checked = appSettings.display.showTotals;
+                        document.getElementById('settings-auto-terrorism').checked = appSettings.calculation.autoTerrorism;
+                        document.getElementById('settings-auto-security').checked = appSettings.calculation.autoSecurity;
+                        document.getElementById('settings-auto-retirement').checked = appSettings.calculation.autoRetirement;
+                        document.getElementById('settings-default-unit').value = appSettings.defaults.unit;
+                        
+                        // تطبيق الإعدادات الافتراضية
+                        document.getElementById('unit').value = appSettings.defaults.unit;
+                        
+                        // تطبيق خيارات العرض
+                        document.getElementById('show-zero-rows-toggle').checked = appSettings.display.showZeroRows;
+                        document.getElementById('show-totals-toggle').checked = appSettings.display.showTotals;
+                        
+                        // تحديث وضع حساب البدلات
+                        allowanceCalculationMode.terrorism = appSettings.calculation.autoTerrorism ? 'auto' : 'manual';
+                        allowanceCalculationMode.security = appSettings.calculation.autoSecurity ? 'auto' : 'manual';
+                        allowanceCalculationMode.retirement = appSettings.calculation.autoRetirement ? 'auto' : 'manual';
+                    }
+                } catch (error) {
+                    console.error('خطأ في تحميل الإعدادات:', error);
+                }
+            }
+            
+            // تصدير القائمة
+            function exportList() {
+                if (peopleList.length === 0) {
+                    alert('لا توجد بيانات للتصدير');
+                    return;
+                }
+                
+                try {
+                    // إنشاء نص CSV
+                    let csvContent = 'الاسم,الرقم العام,الوحدة,الرتبة,من تاريخ,إلى تاريخ,المبلغ\n';
+                    
+                    peopleList.forEach(person => {
+                        csvContent += `"${person.name}","${person.generalNumber}","${person.unit}","${person.rank}","${new Date(person.startDate).toLocaleDateString()}","${new Date(person.endDate).toLocaleDateString()}","${person.amount.toLocaleString()}"\n`;
+                    });
+                    
+                    // إنشاء رابط التنزيل
+                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', 'قائمة_فروقات_الترقية.csv');
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } catch (error) {
+                    console.error('خطأ في تصدير القائمة:', error);
+                    alert('حدث خطأ أثناء تصدير القائمة');
+                }
+            }
+            
+            // حذف القائمة
+            function clearList() {
+                if (peopleList.length === 0) {
+                    alert('القائمة فارغة بالفعل');
+                    return;
+                }
+                
+                if (confirm('هل أنت متأكد من حذف جميع الأسماء من القائمة؟')) {
+                    peopleList = [];
+                    savePeopleList();
+                    updatePeopleTable();
+                    alert('تم حذف جميع الأسماء من القائمة بنجاح');
+                }
+            }
+            
+            // إعادة تعيين النموذج
+            function resetForm() {
+                if (confirm('هل أنت متأكد من إعادة تعيين النموذج؟')) {
+                    // إعادة تعيين حقول البيانات الأساسية
+                    document.getElementById('name').value = '';
+                    document.getElementById('general-number').value = '';
+                    document.getElementById('id-number').value = '';
+                    document.getElementById('unit').value = appSettings.defaults.unit;
+                    document.getElementById('start-date').value = '';
+                    document.getElementById('end-date').value = '';
+                    document.getElementById('commencement-date').value = '';
+                    
+                    // إعادة تعيين الرتبة والدرجة
+                    document.getElementById('old-rank').value = 'جندي';
+                    document.getElementById('new-rank').value = 'جندي أول';
+                    document.getElementById('old-degree').value = '1';
+                    document.getElementById('new-degree').value = '1';
+                    
+                    // إعادة تعيين مفردات الراتب
+                    document.getElementById('old-basic-salary').value = '';
+                    document.getElementById('new-basic-salary').value = '';
+                    document.getElementById('old-terrorism').value = '';
+                    document.getElementById('new-terrorism').value = '';
+                    document.getElementById('old-security').value = '';
+                    document.getElementById('new-security').value = '';
+                    document.getElementById('old-retirement').value = '';
+                    document.getElementById('new-retirement').value = '';
+                    
+                    // حذف البدلات الإضافية
+                    const allowanceRows = document.querySelectorAll('#allowances-table tbody tr[data-allowance-id]');
+                    allowanceRows.forEach(row => row.remove());
+                    
+                    // إعادة تعيين قوائم البدلات
+                    customAllowances = [];
+                    deletedAllowances = [];
+                    
+                    // استعادة الصفوف المخفية
+                    restoreHiddenRows();
+                    
+                    // تحديث سلم الرواتب
+                    updateSalaryScale();
+                }
+            }
+            
+            // دالة لتحويل الأرقام الإنجليزية إلى أرقام عربية
+            function toArabicNumbers(num) {
+                if (num === undefined || num === null) return '';
+                return String(num).replace(/[0-9]/g, d => String.fromCharCode(d.charCodeAt(0) + 1584));
+            }
+        </script>
+    </div>
 </body>
-
 </html>
+      
