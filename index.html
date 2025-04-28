@@ -6,8 +6,7 @@
     <title>نظام إدارة فروقات الترقية</title>
     <link rel="stylesheet" href="./main.css">
     <!-- إضافة TinyMCE -->
-    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
-    <script src="./jwt-auth.js"></script>
+    <script src="https://cdn.tiny.cloud/1/qagffr3pkuv17a8on1afax661irst1hbr4e6tbv888sz91jc/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
     <script>
 
         // التحقق من الوضع المظلم
@@ -2728,9 +2727,11 @@
                         promotion: false,
                         branding: false,
                         content_style: 'body { font-family: "Tajawal", sans-serif; }',
+                        readonly: false,
                         setup: function(editor) {
                             editor.on('init', function() {
-                                editor.setMode('design');
+                                // Modern editors don't use setMode, they use mode property
+                                editor.mode.set('design');
                             });
                         }
                     });
