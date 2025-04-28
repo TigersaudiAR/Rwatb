@@ -1,5 +1,6 @@
+
 // JWT authentication helper functions for the browser
-// This is a simplified version that doesn't require Node.js modules
+// This is a simplified version that works in browser environment
 
 // Helper functions for browser environment
 (function() {
@@ -11,15 +12,20 @@
 
       // Create a simple token for demonstration purposes
       // In production, this should be generated on the server
-      return `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${btoa(
-        JSON.stringify({
-          sub: "user-123",
-          name: "Replit User",
-          origin: origin,
-          iat: now,
-          exp: now + 3600
-        })
-      )}.signature`;
+      const header = btoa(JSON.stringify({
+        "alg": "HS256",
+        "typ": "JWT"
+      }));
+      
+      const payload = btoa(JSON.stringify({
+        "sub": "user-123",
+        "name": "Replit User",
+        "origin": origin,
+        "iat": now,
+        "exp": now + 3600
+      }));
+      
+      return `${header}.${payload}.signature`;
     };
 
     // Verify JWT token validity (simplified)

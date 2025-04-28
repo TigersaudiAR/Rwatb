@@ -1,10 +1,13 @@
 
+/* استيراد الخط أولاً */
 @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
 
+/* استيراد Tailwind CSS */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* تخصيصات إضافية */
 body {
   font-family: 'Tajawal', sans-serif;
 }
