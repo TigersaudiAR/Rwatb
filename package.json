@@ -12,11 +12,10 @@
     "vite": "^5.4.8"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.4",
-    "autoprefixer": "^10.4.21",
-    "postcss": "^8.5.3",
+    "autoprefixer": "^10.4.17",
+    "postcss": "^8.4.35",
     "postcss-rtl": "^2.0.0",
     "rtlcss": "^4.3.0",
-    "tailwindcss": "^4.1.4"
+    "tailwindcss": "^3.4.1"
   }
 }
