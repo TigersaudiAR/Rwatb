@@ -1,76 +1,191 @@
 
-/* استيراد الخط أولاً */
-@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+/* استيراد الخطوط - تحسين مجموعة الخطوط */
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Cairo:wght@400;600;700&display=swap');
 
 /* استيراد Tailwind CSS */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* تخصيصات إضافية */
-body {
-  font-family: 'Tajawal', sans-serif;
-  direction: rtl;
-  text-align: right;
-  background-color: #f8f9fa;
-  color: #333;
+/* تخصيصات أساسية وتحسينات المظهر */
+:root {
+  --primary-color: #4361ee;
+  --primary-hover: #3a56d4;
+  --secondary-color: #2d46b9;
+  --success-color: #0bb07b;
+  --warning-color: #f59e0b;
+  --danger-color: #ef4444;
+  --info-color: #3b82f6;
+  --light-bg: #f8fafc;
+  --dark-bg: #111827;
+  --light-card: #ffffff;
+  --dark-card: #1f2937;
+  --border-light: #e2e8f0;
+  --border-dark: #374151;
+  --text-light: #333333;
+  --text-dark: #f1f5f9;
 }
 
-/* تحسينات للأزرار */
-button, .btn {
-  @apply py-2 px-4 rounded transition-colors;
-  background-color: #5D5CDE;
-  color: white;
+@layer base {
+  html {
+    font-feature-settings: "rlig" 1, "calt" 1;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Tajawal', 'Cairo', sans-serif;
+    direction: rtl;
+    text-align: right;
+    background-color: var(--light-bg);
+    color: var(--text-light);
+    transition: background-color 0.3s, color 0.3s;
+    line-height: 1.6;
+  }
+  
+  /* تحسين عرض الخطوط */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cairo', 'Tajawal', sans-serif;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
 }
 
-button:hover, .btn:hover {
-  background-color: #4a49b0;
+@layer components {
+  /* تحسينات للأزرار مع تأثيرات أفضل */
+  .btn, button:not(.delete-row-btn) {
+    @apply py-2 px-4 rounded-md font-medium transition-all duration-200 transform;
+    background-color: var(--primary-color);
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn:hover, button:hover:not(.delete-row-btn) {
+    @apply shadow-md translate-y-[-1px];
+    background-color: var(--primary-hover);
+  }
+  
+  .btn:active, button:active:not(.delete-row-btn) {
+    @apply shadow-inner translate-y-[0px];
+  }
+  
+  /* أنماط مختلفة للأزرار */
+  .btn-success {
+    @apply bg-green-600 hover:bg-green-700;
+  }
+  
+  .btn-danger {
+    @apply bg-red-600 hover:bg-red-700;
+  }
+  
+  /* تحسينات للنماذج */
+  input, select, textarea {
+    @apply p-3 border rounded-md outline-none transition-colors duration-200 w-full;
+    border-color: var(--border-light);
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(4px);
+  }
+
+  input:focus, select:focus, textarea:focus {
+    @apply ring-2 ring-opacity-50;
+    border-color: var(--primary-color);
+    ring-color: var(--primary-color);
+    box-shadow: 0 1px 3px rgba(67, 97, 238, 0.1);
+  }
+  
+  /* تحسينات للجداول */
+  table.form-table {
+    @apply w-full border-collapse shadow-sm overflow-hidden rounded-lg;
+    border: 1px solid var(--border-light);
+  }
+
+  table.form-table th {
+    @apply p-3 text-sm font-semibold text-center;
+    background-color: rgba(67, 97, 238, 0.1);
+    border: 1px solid var(--border-light);
+  }
+
+  table.form-table td {
+    @apply p-3 border-t border-l border-r text-center;
+    border-color: var(--border-light);
+  }
+  
+  /* تحسين بطاقات المحتوى */
+  .card {
+    @apply bg-white rounded-lg shadow-md p-6 border border-gray-100;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .card:hover {
+    @apply shadow-lg;
+    transform: translateY(-2px);
+  }
 }
 
-/* تحسينات للنماذج */
-input, select, textarea {
-  @apply p-2 border rounded outline-none;
-  border-color: #ddd;
-}
-
-input:focus, select:focus, textarea:focus {
-  border-color: #5D5CDE;
-}
-
-/* تحسينات للجداول */
-table {
-  @apply w-full border-collapse;
-}
-
-table th {
-  @apply bg-gray-100 p-2 border;
-}
-
-table td {
-  @apply p-2 border;
-}
-
-/* تحسينات للعناصر في dark mode */
+/* تحسينات للوضع المظلم */
 .dark {
   color-scheme: dark;
-  background-color: #1f2937;
-  color: #f3f4f6;
+  background-color: var(--dark-bg);
+  color: var(--text-dark);
 }
 
-.dark button, .dark .btn {
-  background-color: #5D5CDE;
+.dark .card {
+  @apply bg-gray-800 border-gray-700;
+}
+
+.dark button:not(.delete-row-btn), .dark .btn {
+  background-color: var(--primary-color);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 
 .dark input, .dark select, .dark textarea {
-  background-color: #374151;
-  color: #f3f4f6;
-  border-color: #4b5563;
+  background-color: rgba(55, 65, 81, 0.8);
+  color: var(--text-dark);
+  border-color: var(--border-dark);
 }
 
-.dark table th {
-  background-color: #374151;
+.dark table.form-table {
+  border-color: var(--border-dark);
 }
 
-.dark table td {
-  border-color: #4b5563;
+.dark table.form-table th {
+  background-color: rgba(67, 97, 238, 0.2);
+  border-color: var(--border-dark);
+}
+
+.dark table.form-table td {
+  border-color: var(--border-dark);
+}
+
+/* تحسينات الطباعة */
+@media print {
+  body {
+    background-color: white !important;
+    color: black !important;
+  }
+  
+  .print-container {
+    padding: 0 !important;
+    border: none !important;
+  }
+  
+  .print-table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  .print-table th,
+  .print-table td {
+    border: 1px solid #000 !important;
+    padding: 8px !important;
+  }
+}
+
+/* تأثيرات الحركة والتفاعل */
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

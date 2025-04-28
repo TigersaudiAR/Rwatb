@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="./main.css">
     <!-- إضافة TinyMCE بطريقة تعمل بدون API Key - النسخة المجانية المستضافة ذاتياً -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.7.3/tinymce.min.js" referrerpolicy="origin"></script>
-    <script src="./tinymce-ar.js"></script>
+    <script src="./tinymce-ar.js" charset="UTF-8"></script>
     <script>
       // تهيئة المحرر عند تحميل الصفحة - تأكد من تحميل TinyMCE أولاً
       window.addEventListener('load', function() {
@@ -15,9 +15,10 @@
           tinymce.init({
             selector: '#template-content',
             plugins: 'anchor autolink charmap codesample image link lists media searchreplace table visualblocks wordcount',
-            toolbar: 'undo redo | blocks | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | charmap | removeformat',
+            toolbar: 'undo redo | blocks fontfamily | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | charmap | removeformat',
             directionality: 'rtl',
             language: 'ar',
+            language_url: './tinymce-ar.js',
             min_height: 400,
             promotion: false,
             branding: false,
@@ -25,7 +26,8 @@
             statusbar: true,
             readonly: false,
             forced_root_block: 'p',
-            content_style: 'body { font-family: "Tajawal", sans-serif; direction: rtl; }',
+            content_style: 'body { font-family: "Cairo", "Tajawal", sans-serif; direction: rtl; font-size: 16px; }',
+            font_family_formats: 'Tajawal=Tajawal,sans-serif; Cairo=Cairo,sans-serif; Arial=arial,helvetica,sans-serif; Courier New=courier new,courier,monospace; Georgia=georgia,times new roman,times,serif',
             style: 'body { font-family: "Tajawal", sans-serif; }'
           });
         }
