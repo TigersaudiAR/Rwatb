@@ -5,27 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام إدارة فروقات الترقية</title>
     <link rel="stylesheet" href="./main.css">
-    <!-- إضافة Tailwind للعرض المباشر (مؤقت) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: '#5D5CDE',
-            },
-            fontFamily: {
-              'sans': ['Tajawal', 'sans-serif'],
-            }
-          }
-        }
-      }
-    </script>
+    <!-- تم استيراد Tailwind عبر PostCSS بدلاً من CDN -->
     <!-- إضافة TinyMCE بطريقة تعمل بدون API Key -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.7.3/tinymce.min.js" integrity="sha512-vMJaE6Wc6yl1N6LkBek3CVxkVbwyY4J8XOUm9Gw2VM67VfMb/qLZXag/+HSoW4liLy9FQrGpUKHVJ9yt1Zs2cg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
-      // تهيئة المحرر عند تحميل الصفحة
-      document.addEventListener('DOMContentLoaded', function() {
+      // تهيئة المحرر عند تحميل الصفحة - تأكد من تحميل TinyMCE أولاً
+      window.addEventListener('load', function() {
         if (typeof tinymce !== 'undefined') {
           tinymce.init({
             selector: '#template-content',

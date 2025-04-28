@@ -10,4 +10,11 @@
 /* تخصيصات إضافية */
 body {
   font-family: 'Tajawal', sans-serif;
+  direction: rtl;
+  text-align: right;
+}
+
+/* تحسينات للعناصر في dark mode */
+.dark {
+  color-scheme: dark;
 }
