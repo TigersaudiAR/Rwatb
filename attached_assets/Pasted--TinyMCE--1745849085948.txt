@@ -1,0 +1,123 @@
+
+ابحث عن الدليل المناسب لك
+توفر مستندات TinyMCE خيارات مختلفة للتثبيت والتكامل:
+
+بليزر
+ممشوق
+مكونات الويب
+جيكويري
+بوتستراب
+جانغو
+لارافيل
+روبي أون ريلز
+ووردبريس
+يمكنك العثور على القائمة الكاملة للأدلة في تثبيت TinyMCE  قسم من Tiny Docs.
+
+استخدم مفتاح API الخاص بك لإعداد تثبيت Tiny Cloud الخاص بك:
+yxedjbvfa9gsnyw4vvziuofp3ealf61azvlp5cpubt5vpnof
+
+نسخ مفتاح API
+قم بتكوين إعداد TinyMCE الخاص بك
+يحتوي مقتطف التعليمات البرمجية أدناه على نموذج تكوين يتضمن المكونات الإضافية التي يحق لك استخدامها في خطة TinyMCE الخاصة بك:
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+plugins: [
+  // Core editing features
+  'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
+  // Your account includes a free trial of TinyMCE premium features
+  // Try the most popular premium features until May 7, 2025:
+  'checklist', 'mediaembed', 'casechange', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'editimage', 'advtemplate', 'ai', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown','importword', 'exportword', 'exportpdf'
+],
+toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+tinycomments_mode: 'embedded',
+tinycomments_author: 'Author name',
+mergetags_list: [
+  { value: 'First.Name', title: 'First Name' },
+  { value: 'Email', title: 'Email' },
+],
+ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+
+ينسخ
+استفد من الإصدار التجريبي المجاني لمدة 14 يومًا من الميزات المتقدمة لـ TinyMCE!
+تتضمن النسخة التجريبية المجانية الخاصة بك ما يلي:
+الوصول إلى كل الميزات التي تقدمها TinyMCE
+قم بتحسين تجربة إنشاء المحتوى وتحريره في تطبيقك باستخدام بعض ميزاتنا الأكثر شيوعًا - بدءًا من الأدوات الجاهزة التي يتوقعها المستخدمون إلى إمكانيات التخصيص التي لا نهاية لها.
+
+أحمال محرر غير محدودة
+نحن نعلم أنه قد يكون من الصعب تقدير أحمال المحرر لديك في البداية، لذا اقضِ 14 يومًا خالية من التوتر معنا لتقييم استخدامك دون تكبد رسوم إضافية.
+
+تنتهي الفترة التجريبية المجانية
+يمكن
+7
+ابدأ باستخدام هذه الميزات الشائعة
+باورباست
+نسخ/لصق المحتوى بشكل نظيف من Word وGoogle Docs وHTML والمزيد بدقة 99.9%
+
+اقرأ المزيد
+انظر الوثائق
+قلم دائم
+يُستخدم عند الحاجة إلى إضافة نص ذي نمط مميز بشكل متكرر. يوفر الكثير من الوقت!
+
+اقرأ المزيد
+انظر الوثائق
+الجداول المحسنة
+ارفع جداولك إلى المستوى التالي باستخدام الفرز المتقدم ووظائف الجدول
+
+اقرأ المزيد
+انظر الوثائق
+قوائم المراجعة
+ساعد المستخدمين على تنظيم المهام المهمة وتحسين الإنتاجية باستخدام هذه الأداة العالمية
+
+اقرأ المزيد
+انظر الوثائق
+تنسيق الرسام
+نسخ ولصق التنسيق، مثل نمط الخط وحجمه، من موقع محتوى إلى آخر
+
+اقرأ المزيد
+انظر الوثائق
+محرر الكود المعزز
+اجعل تعديل HTML أسفل محتوى WYSIWYG الخاص بك أسهل، مباشرةً داخل TinyMCE
+
+اقرأ المزيد
+انظر الوثائق
+تغيير الحالة
+التبديل بسرعة بين النص المحدد بين حالة العنوان والأحرف الكبيرة والصغيرة
+
+اقرأ المزيد
+انظر الوثائق
+تحرير الصور
+اقلب صورك، وقم بتدويرها، وقم بقصها، وتغيير حجمها، وتطبيق المرشحات عليها، كل ذلك داخل المحرر
+
+اقرأ المزيد
+انظر الوثائق
+تخصيص المحرر الخاص بك
+خيارات التكوين الشائعة:
+المكونات الإضافية
+شريط الأدوات
+شريط القوائم
+ارتفاع
+محتوى_css
+اقرأ المزيد حول خيارات تكوين TinyMCE في مستندات TinyMCE .
+
+إذا لم تكن متأكدًا من الخيارات المُراد تكوينها، فانسخ المقطع إلى تطبيقك لتتمكن من بدء استخدام المحرر. يمكنك دائمًا تغيير خيارات التكوين لاحقًا.
+
+أنت جاهز لاستخدام TinyMCE!
+في هذه المرحلة، تم تثبيت المحرر وأصبح جاهزًا للاستخدام في التطبيق الخاص بك.
+
+لاسترداد المحتوى من TinyMCE، قم بمعالجة المحتوى باستخدام معالج النموذج  أو استخدم طريقة API getContent() .
+
+لاستخدام TinyMCE على نطاقات أخرى غير localhost، أضف نطاقك إلى صفحة النطاقات المعتمدة
