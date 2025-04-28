@@ -1,4 +1,3 @@
-
 // استيراد jsonwebtoken (ملاحظة: هذا الكود يعمل في الخادم فقط)
 const jwt = require('jsonwebtoken');
 
@@ -60,26 +59,44 @@ xULg/6BKwhB4XK+B7bcCBTM3xuSDZEnNqpPHey/mDAkvlwyUYRT3bjeoPuQ=
 
 // إعداد وظائف على جانب العميل للمتصفح
 if (typeof window !== 'undefined') {
-  /**
-   * إنشاء رمز JWT مؤقت للمتصفح
-   * ملاحظة: هذه ليست الطريقة الآمنة، في بيئة الإنتاج يجب توليد JWT من الخادم
-   */ 
-  window.generateTinyMCEJWT = function () {
-    const origin = window.location.origin;
-    const now = Math.floor(Date.now() / 1000);
-    
-    // محاكاة لتوليد JWT في المتصفح (بدون توقيع حقيقي)
-    // في بيئة الإنتاج: استخدم API لتوليد JWT من الخادم
-    return `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${btoa(
-      JSON.stringify({
-        sub: "user-123",
-        name: "Replit User",
-        origin: origin,
-        iat: now,
-        exp: now + 3600
-      })
-    )}.signature`;
-  };
+  // وظائف مساعدة لمعالجة رموز JWT في المتصفح
+  // ملاحظة: هذا مجرد حل مؤقت، ويجب تنفيذ حل أكثر أمانًا في بيئة الإنتاج
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // تعريف وظيفة لإنشاء رمز JWT بسيط
+    window.generateTinyMCEJWT = function() {
+      const origin = window.location.origin;
+      const now = Math.floor(Date.now() / 1000);
+
+      // محاكاة لتوليد JWT في المتصفح
+      // في بيئة الإنتاج: استخدم API لتوليد JWT من الخادم
+      return `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${btoa(
+        JSON.stringify({
+          sub: "user-123",
+          name: "Replit User",
+          origin: origin,
+          iat: now,
+          exp: now + 3600
+        })
+      )}.signature`;
+    };
+
+    // دالة مساعدة للتحقق من صلاحية JWT
+    window.verifyJWT = function(token) {
+      try {
+        // تحليل الجزء الثاني من JWT (payload)
+        const payloadBase64 = token.split('.')[1];
+        const payload = JSON.parse(atob(payloadBase64));
+
+        // التحقق من وقت انتهاء الصلاحية
+        const now = Math.floor(Date.now() / 1000);
+        return payload.exp > now;
+      } catch (error) {
+        console.error('خطأ في التحقق من JWT:', error);
+        return false;
+      }
+    };
+  });
 }
 
 // إعداد وظائف على جانب الخادم لـ Node.js

@@ -6,7 +6,7 @@
     <title>نظام إدارة فروقات الترقية</title>
     <link rel="stylesheet" href="./main.css">
     <!-- إضافة TinyMCE -->
-    <script src="https://cdn.tiny.cloud/1/yxedjbvfa9gsnyw4vvziuofp3ealf61azvlp5cpubt5vpnof/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
     <script src="./jwt-auth.js"></script>
     <script>
 
@@ -2719,22 +2719,20 @@
                         selector: '#template-content',
                         plugins: [
                             'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists', 'media', 
-                            'searchreplace', 'table', 'visualblocks', 'wordcount', 'checklist', 'mediaembed', 'casechange', 
-                            'formatpainter', 'pageembed', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 
-                            'advtable', 'advcode', 'editimage', 'advtemplate', 'mentions', 'tinycomments', 'tableofcontents', 
-                            'footnotes', 'autocorrect', 'typography', 'inlinecss', 'markdown'
+                            'searchreplace', 'table', 'visualblocks', 'wordcount'
                         ],
-                        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | addcomment showcomments | spellcheckdialog typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
-                        api_key: 'yxedjbvfa9gsnyw4vvziuofp3ealf61azvlp5cpubt5vpnof',
-                        content_security_policy: "script-src 'self' cdn.tiny.cloud;",
+                        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
                         directionality: 'rtl',
                         language: 'ar',
                         min_height: 400,
                         promotion: false,
                         branding: false,
-                        tinycomments_mode: 'embedded',
-                        tinycomments_author: 'Author name',
-                        content_style: 'body { font-family: "Tajawal", sans-serif; }'
+                        content_style: 'body { font-family: "Tajawal", sans-serif; }',
+                        setup: function(editor) {
+                            editor.on('init', function() {
+                                editor.setMode('design');
+                            });
+                        }
                     });
                     
                     // تحميل النماذج المخصصة من التخزين المحلي
