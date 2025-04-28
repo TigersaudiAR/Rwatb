@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام إدارة فروقات الترقية</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- إضافة TinyMCE -->
+    <script src="https://cdn.tiny.cloud/1/yxedjbvfa9gsnyw4vvziuofp3ealf61azvlp5cpubt5vpnof/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -291,6 +293,11 @@
                     <li class="mr-2" role="presentation">
                         <button id="settings-tab" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-primary hover:border-primary" aria-selected="false" type="button" onclick="switchTab('settings')">
                             الإعدادات
+                        </button>
+                    </li>
+                    <li class="mr-2" role="presentation">
+                        <button id="templates-tab" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-primary hover:border-primary" aria-selected="false" type="button" onclick="switchTab('templates')">
+                            إدارة النماذج
                         </button>
                     </li>
                 </ul>
@@ -685,6 +692,11 @@
                     <button id="preview-declaration-btn" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-md text-base font-medium transition-colors" onclick="previewDeclarationForm()">معاينة نموذج عدم أسبقية الصرف</button>
                 </div>
                 
+                <!-- أزرار النماذج المخصصة -->
+                <div id="custom-templates-buttons" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <!-- سيتم إضافة أزرار للنماذج المخصصة هنا ديناميكياً -->
+                </div>
+                
                 <div class="flex justify-center gap-4 my-4">
                     <button id="print-forms-btn" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-md text-lg font-medium transition-colors" onclick="printCurrentForm()">
                         <span class="mr-2">طباعة النموذج الحالي</span>
@@ -755,6 +767,157 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
                     </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- قسم إدارة النماذج -->
+        <div id="templates-content" class="tab-content hidden">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">إدارة نماذج الطباعة</h2>
+                
+                <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg mb-4">
+                    <p class="mb-2">يمكنك من خلال هذه الصفحة إدارة نماذج الطباعة، إضافة نماذج جديدة أو تعديل النماذج الموجودة.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="col-span-1">
+                        <h3 class="text-lg font-medium mb-3">النماذج المتاحة</h3>
+                        <div class="bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md p-3">
+                            <ul id="templates-list" class="space-y-2">
+                                <li class="p-2 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 flex justify-between items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-900" data-template="difference-form" onclick="loadTemplate('difference-form')">
+                                    <span>نموذج فروقات الترقية</span>
+                                    <span class="badge bg-green-500 text-white text-xs px-2 py-1 rounded">أساسي</span>
+                                </li>
+                                <li class="p-2 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 flex justify-between items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-900" data-template="declaration-form" onclick="loadTemplate('declaration-form')">
+                                    <span>نموذج عدم أسبقية الصرف</span>
+                                    <span class="badge bg-green-500 text-white text-xs px-2 py-1 rounded">أساسي</span>
+                                </li>
+                            </ul>
+                            
+                            <!-- زر إضافة نموذج جديد -->
+                            <button id="add-template-btn" class="w-full mt-4 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-center" onclick="createNewTemplate()">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                                إضافة نموذج جديد
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="col-span-2">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="text-lg font-medium" id="template-editor-title">تحرير النموذج</h3>
+                            <div class="flex space-x-2 space-x-reverse">
+                                <button id="import-template-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors" onclick="showImportModal()">
+                                    استيراد
+                                </button>
+                                <button id="save-template-btn" class="bg-primary hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors" onclick="saveCurrentTemplate()">
+                                    حفظ
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md p-3">
+                            <!-- إدراج محرر TinyMCE هنا -->
+                            <input type="hidden" id="current-template-id" value="">
+                            <input type="text" id="template-name" class="w-full p-3 mb-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md text-base" placeholder="اسم النموذج" dir="rtl">
+                            <textarea id="template-content" style="min-height: 400px;"></textarea>
+                            
+                            <div class="flex justify-between items-center mt-4">
+                                <div class="flex items-center space-x-2 space-x-reverse">
+                                    <button id="insert-variable-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors" onclick="showVariablesModal()">
+                                        إدراج متغير
+                                    </button>
+                                    <button id="preview-template-btn" class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors" onclick="previewTemplate()">
+                                        معاينة
+                                    </button>
+                                </div>
+                                <button id="delete-template-btn" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors hidden" onclick="deleteCurrentTemplate()">
+                                    حذف النموذج
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- نافذة استيراد النموذج -->
+                <div id="import-template-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
+                        <h3 class="text-lg font-semibold mb-4">استيراد نموذج</h3>
+                        
+                        <div class="mb-4">
+                            <div class="mb-3">
+                                <label for="import-type" class="block text-gray-700 dark:text-gray-300 mb-2">نوع الاستيراد</label>
+                                <select id="import-type" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base">
+                                    <option value="html">HTML</option>
+                                    <option value="docx" disabled>Word (قريباً)</option>
+                                    <option value="xlsx" disabled>Excel (قريباً)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="import-content" class="block text-gray-700 dark:text-gray-300 mb-2">محتوى النموذج</label>
+                                <textarea id="import-content" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" rows="8" placeholder="قم بلصق محتوى HTML هنا..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-end space-x-3 space-x-reverse">
+                            <button id="cancel-import-btn" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md text-base font-medium transition-colors" onclick="hideImportModal()">إلغاء</button>
+                            <button id="confirm-import-btn" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-md text-base font-medium transition-colors" onclick="importTemplate()">استيراد</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- نافذة المتغيرات -->
+                <div id="variables-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
+                        <h3 class="text-lg font-semibold mb-4">إدراج متغير</h3>
+                        
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">اختر متغير لإدراجه في النموذج. سيتم استبدال المتغير بالقيمة المناسبة عند الطباعة.</p>
+                            
+                            <div class="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
+                                <button class="text-right p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md" onclick="insertVariable('name')">اسم العسكري</button>
+                                <button class="text-right p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md" onclick="insertVariable('generalNumber')">الرقم العام</button>
+                                <button class="text-right p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md" onclick="insertVariable('idNumber')">رقم الهوية</button>
+                                <button class="text-right p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md" onclick="insertVariable('unit')">الوحدة</button>
+                                <button class="text-right p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md" onclick="insertVariable('oldRank')">الرتبة السابقة</button>
+                                <button class="text-right p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md" onclick="insertVariable('newRank')">الرتبة الحالية</button>
+                                <button class="text-right p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md" onclick="insertVariable('startDate')">تاريخ بداية الحسبة</button>
+                                <button class="text-right p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md" onclick="insertVariable('endDate')">تاريخ نهاية الحسبة</button>
+                                <button class="text-right p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md" onclick="insertVariable('commencementDate')">تاريخ المباشرة</button>
+                                <button class="text-right p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md" onclick="insertVariable('netDiff')">صافي المبلغ</button>
+                                <button class="text-right p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md" onclick="insertVariable('daysDiff')">عدد الأيام</button>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-end">
+                            <button id="close-variables-btn" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md text-base font-medium transition-colors" onclick="hideVariablesModal()">إغلاق</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- نافذة معاينة النموذج -->
+                <div id="preview-template-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-4xl h-4/5 flex flex-col">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold">معاينة النموذج</h3>
+                            <button onclick="hidePreviewModal()" class="text-gray-500 hover:text-gray-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div id="preview-container" class="flex-1 overflow-auto p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-white text-black">
+                            <!-- هنا سيتم عرض معاينة النموذج -->
+                        </div>
+                        
+                        <div class="flex justify-end mt-4">
+                            <button class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md text-base font-medium transition-colors" onclick="hidePreviewModal()">إغلاق</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2554,6 +2717,420 @@
                     alert('حدث خطأ أثناء تصدير القائمة');
                 }
             }
+            
+            // =============== بداية كود إدارة النماذج ===============
+            
+            // متغير لتخزين النماذج المخصصة
+            let customTemplates = [];
+            
+            // تهيئة TinyMCE
+            document.addEventListener('DOMContentLoaded', function() {
+                if (typeof tinymce !== 'undefined') {
+                    tinymce.init({
+                        selector: '#template-content',
+                        plugins: [
+                            'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists', 'media', 
+                            'searchreplace', 'table', 'visualblocks', 'wordcount', 'checklist', 'mediaembed', 'casechange', 
+                            'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 
+                            'advtable', 'advcode', 'editimage', 'advtemplate', 'ai', 'mentions', 'tinycomments', 'tableofcontents', 
+                            'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown', 'importword', 'exportword', 'exportpdf'
+                        ],
+                        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+                        directionality: 'rtl',
+                        language: 'ar',
+                        min_height: 400,
+                        promotion: false,
+                        branding: false,
+                        tinycomments_mode: 'embedded',
+                        tinycomments_author: 'Author name',
+                        content_style: 'body { font-family: "Tajawal", sans-serif; }'
+                    });
+                    
+                    // تحميل النماذج المخصصة من التخزين المحلي
+                    loadCustomTemplates();
+                }
+            });
+            
+            // تحميل النماذج المخصصة من التخزين المحلي
+            function loadCustomTemplates() {
+                try {
+                    const savedTemplates = localStorage.getItem('customTemplates');
+                    if (savedTemplates) {
+                        customTemplates = JSON.parse(savedTemplates);
+                        updateTemplatesList();
+                        updateCustomTemplatesButtons();
+                    }
+                } catch (error) {
+                    console.error('خطأ في تحميل النماذج المخصصة:', error);
+                }
+            }
+            
+            // حفظ النماذج المخصصة في التخزين المحلي
+            function saveCustomTemplates() {
+                try {
+                    localStorage.setItem('customTemplates', JSON.stringify(customTemplates));
+                    updateCustomTemplatesButtons();
+                } catch (error) {
+                    console.error('خطأ في حفظ النماذج المخصصة:', error);
+                }
+            }
+            
+            // تحديث قائمة النماذج
+            function updateTemplatesList() {
+                const templatesList = document.getElementById('templates-list');
+                if (!templatesList) return;
+                
+                // الحفاظ على النماذج الأساسية
+                const basicTemplatesHTML = `
+                    <li class="p-2 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 flex justify-between items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-900" data-template="difference-form" onclick="loadTemplate('difference-form')">
+                        <span>نموذج فروقات الترقية</span>
+                        <span class="badge bg-green-500 text-white text-xs px-2 py-1 rounded">أساسي</span>
+                    </li>
+                    <li class="p-2 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 flex justify-between items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-900" data-template="declaration-form" onclick="loadTemplate('declaration-form')">
+                        <span>نموذج عدم أسبقية الصرف</span>
+                        <span class="badge bg-green-500 text-white text-xs px-2 py-1 rounded">أساسي</span>
+                    </li>
+                `;
+                
+                // إضافة النماذج المخصصة
+                let customTemplatesHTML = '';
+                customTemplates.forEach(template => {
+                    customTemplatesHTML += `
+                        <li class="p-2 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 flex justify-between items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-900" data-template="${template.id}" onclick="loadTemplate('${template.id}')">
+                            <span>${template.name}</span>
+                            <span class="badge bg-blue-500 text-white text-xs px-2 py-1 rounded">مخصص</span>
+                        </li>
+                    `;
+                });
+                
+                templatesList.innerHTML = basicTemplatesHTML + customTemplatesHTML;
+            }
+            
+            // تحديث أزرار النماذج المخصصة في تبويب معاينة النماذج
+            function updateCustomTemplatesButtons() {
+                const customTemplatesButtons = document.getElementById('custom-templates-buttons');
+                if (!customTemplatesButtons) return;
+                
+                customTemplatesButtons.innerHTML = '';
+                
+                customTemplates.forEach(template => {
+                    const button = document.createElement('button');
+                    button.className = 'bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-base font-medium transition-colors';
+                    button.textContent = `معاينة ${template.name}`;
+                    button.onclick = function() { previewCustomTemplate(template.id); };
+                    customTemplatesButtons.appendChild(button);
+                });
+            }
+            
+            // تحميل نموذج للتحرير
+            function loadTemplate(templateId) {
+                const titleElement = document.getElementById('template-editor-title');
+                const nameInput = document.getElementById('template-name');
+                const deleteButton = document.getElementById('delete-template-btn');
+                const currentTemplateIdInput = document.getElementById('current-template-id');
+                
+                if (!titleElement || !nameInput || !deleteButton || !currentTemplateIdInput) return;
+                
+                currentTemplateIdInput.value = templateId;
+                
+                // تحديد ما إذا كان النموذج أساسي أو مخصص
+                if (templateId === 'difference-form' || templateId === 'declaration-form') {
+                    // نموذج أساسي
+                    titleElement.textContent = templateId === 'difference-form' ? 'تحرير نموذج فروقات الترقية' : 'تحرير نموذج عدم أسبقية الصرف';
+                    nameInput.value = templateId === 'difference-form' ? 'نموذج فروقات الترقية' : 'نموذج عدم أسبقية الصرف';
+                    nameInput.disabled = true;
+                    deleteButton.classList.add('hidden');
+                    
+                    // استرجاع محتوى النموذج الأساسي
+                    let content = '';
+                    
+                    if (templateId === 'difference-form') {
+                        content = document.getElementById('difference-form')?.innerHTML || '';
+                    } else if (templateId === 'declaration-form') {
+                        content = document.getElementById('declaration-form')?.innerHTML || '';
+                    }
+                    
+                    // تعيين المحتوى في المحرر
+                    if (tinymce.get('template-content')) {
+                        tinymce.get('template-content').setContent(content);
+                    }
+                } else {
+                    // نموذج مخصص
+                    const customTemplate = customTemplates.find(t => t.id === templateId);
+                    if (customTemplate) {
+                        titleElement.textContent = `تحرير ${customTemplate.name}`;
+                        nameInput.value = customTemplate.name;
+                        nameInput.disabled = false;
+                        deleteButton.classList.remove('hidden');
+                        
+                        // تعيين المحتوى في المحرر
+                        if (tinymce.get('template-content')) {
+                            tinymce.get('template-content').setContent(customTemplate.content);
+                        }
+                    }
+                }
+            }
+            
+            // إنشاء نموذج جديد
+            function createNewTemplate() {
+                const titleElement = document.getElementById('template-editor-title');
+                const nameInput = document.getElementById('template-name');
+                const deleteButton = document.getElementById('delete-template-btn');
+                const currentTemplateIdInput = document.getElementById('current-template-id');
+                
+                if (!titleElement || !nameInput || !deleteButton || !currentTemplateIdInput) return;
+                
+                // إنشاء معرف فريد للنموذج الجديد
+                const newTemplateId = 'template-' + Date.now();
+                currentTemplateIdInput.value = newTemplateId;
+                
+                // تعيين القيم الافتراضية
+                titleElement.textContent = 'إنشاء نموذج جديد';
+                nameInput.value = 'نموذج جديد';
+                nameInput.disabled = false;
+                deleteButton.classList.add('hidden');
+                
+                // تفريغ المحرر
+                if (tinymce.get('template-content')) {
+                    tinymce.get('template-content').setContent('');
+                }
+            }
+            
+            // حفظ النموذج الحالي
+            function saveCurrentTemplate() {
+                const currentTemplateId = document.getElementById('current-template-id')?.value;
+                const templateName = document.getElementById('template-name')?.value;
+                
+                if (!currentTemplateId || !templateName) {
+                    alert('يرجى تحديد اسم النموذج');
+                    return;
+                }
+                
+                // الحصول على محتوى المحرر
+                const templateContent = tinymce.get('template-content')?.getContent() || '';
+                
+                // تحديد ما إذا كان النموذج أساسي أو مخصص
+                if (currentTemplateId === 'difference-form' || currentTemplateId === 'declaration-form') {
+                    // حفظ النموذج الأساسي في localStorage
+                    try {
+                        localStorage.setItem(`template-${currentTemplateId}`, templateContent);
+                        
+                        // تحديث النموذج في العرض
+                        const formElement = document.getElementById(currentTemplateId);
+                        if (formElement) {
+                            formElement.innerHTML = templateContent;
+                        }
+                        
+                        alert('تم حفظ النموذج بنجاح');
+                    } catch (error) {
+                        console.error('خطأ في حفظ النموذج:', error);
+                        alert('حدث خطأ أثناء حفظ النموذج');
+                    }
+                } else {
+                    // التحقق مما إذا كان النموذج موجودًا بالفعل
+                    const existingTemplateIndex = customTemplates.findIndex(t => t.id === currentTemplateId);
+                    
+                    if (existingTemplateIndex !== -1) {
+                        // تحديث النموذج الموجود
+                        customTemplates[existingTemplateIndex].name = templateName;
+                        customTemplates[existingTemplateIndex].content = templateContent;
+                    } else {
+                        // إضافة نموذج جديد
+                        customTemplates.push({
+                            id: currentTemplateId,
+                            name: templateName,
+                            content: templateContent
+                        });
+                    }
+                    
+                    // حفظ النماذج المخصصة
+                    saveCustomTemplates();
+                    updateTemplatesList();
+                    
+                    alert('تم حفظ النموذج بنجاح');
+                }
+            }
+            
+            // حذف النموذج الحالي
+            function deleteCurrentTemplate() {
+                const currentTemplateId = document.getElementById('current-template-id')?.value;
+                
+                if (!currentTemplateId) return;
+                
+                // التحقق مما إذا كان النموذج أساسي
+                if (currentTemplateId === 'difference-form' || currentTemplateId === 'declaration-form') {
+                    alert('لا يمكن حذف النماذج الأساسية');
+                    return;
+                }
+                
+                if (confirm('هل أنت متأكد من حذف هذا النموذج؟')) {
+                    // حذف النموذج من القائمة
+                    const templateIndex = customTemplates.findIndex(t => t.id === currentTemplateId);
+                    if (templateIndex !== -1) {
+                        customTemplates.splice(templateIndex, 1);
+                        saveCustomTemplates();
+                        updateTemplatesList();
+                        
+                        // إعادة تعيين المحرر
+                        createNewTemplate();
+                        
+                        alert('تم حذف النموذج بنجاح');
+                    }
+                }
+            }
+            
+            // إظهار نافذة استيراد النموذج
+            function showImportModal() {
+                const importModal = document.getElementById('import-template-modal');
+                if (importModal) importModal.classList.remove('hidden');
+            }
+            
+            // إخفاء نافذة استيراد النموذج
+            function hideImportModal() {
+                const importModal = document.getElementById('import-template-modal');
+                if (importModal) importModal.classList.add('hidden');
+            }
+            
+            // استيراد نموذج
+            function importTemplate() {
+                const importType = document.getElementById('import-type')?.value;
+                const importContent = document.getElementById('import-content')?.value;
+                
+                if (!importType || !importContent) {
+                    alert('يرجى تحديد نوع ومحتوى النموذج');
+                    return;
+                }
+                
+                if (importType === 'html') {
+                    // استيراد HTML
+                    if (tinymce.get('template-content')) {
+                        tinymce.get('template-content').setContent(importContent);
+                    }
+                    
+                    hideImportModal();
+                } else {
+                    alert('نوع الاستيراد المحدد غير مدعوم حاليًا');
+                }
+            }
+            
+            // إظهار نافذة المتغيرات
+            function showVariablesModal() {
+                const variablesModal = document.getElementById('variables-modal');
+                if (variablesModal) variablesModal.classList.remove('hidden');
+            }
+            
+            // إخفاء نافذة المتغيرات
+            function hideVariablesModal() {
+                const variablesModal = document.getElementById('variables-modal');
+                if (variablesModal) variablesModal.classList.add('hidden');
+            }
+            
+            // إدراج متغير في المحرر
+            function insertVariable(variable) {
+                if (tinymce.get('template-content')) {
+                    tinymce.get('template-content').execCommand('mceInsertContent', false, `\${${variable}}`);
+                }
+                hideVariablesModal();
+            }
+            
+            // معاينة النموذج
+            function previewTemplate() {
+                const previewModal = document.getElementById('preview-template-modal');
+                const previewContainer = document.getElementById('preview-container');
+                
+                if (!previewModal || !previewContainer) return;
+                
+                // الحصول على محتوى النموذج
+                const templateContent = tinymce.get('template-content')?.getContent() || '';
+                
+                // إظهار معاينة مع تطبيق المتغيرات
+                let previewContent = templateContent;
+                
+                if (calculatedData && calculatedData.name) {
+                    // استبدال المتغيرات بقيم حقيقية
+                    previewContent = previewContent.replace(/\${name}/g, calculatedData.name);
+                    previewContent = previewContent.replace(/\${generalNumber}/g, calculatedData.generalNumber);
+                    previewContent = previewContent.replace(/\${idNumber}/g, calculatedData.idNumber || '');
+                    previewContent = previewContent.replace(/\${unit}/g, calculatedData.unit);
+                    previewContent = previewContent.replace(/\${oldRank}/g, calculatedData.oldRank);
+                    previewContent = previewContent.replace(/\${newRank}/g, calculatedData.newRank);
+                    previewContent = previewContent.replace(/\${startDate}/g, new Date(calculatedData.startDate).toLocaleDateString('ar-SA', { calendar: 'islamic' }));
+                    previewContent = previewContent.replace(/\${endDate}/g, new Date(calculatedData.endDate).toLocaleDateString('ar-SA', { calendar: 'islamic' }));
+                    
+                    if (calculatedData.commencementDate) {
+                        previewContent = previewContent.replace(/\${commencementDate}/g, new Date(calculatedData.commencementDate).toLocaleDateString('ar-SA', { calendar: 'islamic' }));
+                    }
+                    
+                    previewContent = previewContent.replace(/\${netDiff}/g, calculatedData.netDiff.toLocaleString('ar-SA'));
+                    previewContent = previewContent.replace(/\${daysDiff}/g, calculatedData.daysDiff.toString());
+                }
+                
+                previewContainer.innerHTML = previewContent;
+                previewModal.classList.remove('hidden');
+            }
+            
+            // إخفاء نافذة المعاينة
+            function hidePreviewModal() {
+                const previewModal = document.getElementById('preview-template-modal');
+                if (previewModal) previewModal.classList.add('hidden');
+            }
+            
+            // معاينة نموذج مخصص
+            function previewCustomTemplate(templateId) {
+                const customTemplate = customTemplates.find(t => t.id === templateId);
+                if (!customTemplate) return;
+                
+                // إنشاء نسخة مؤقتة من النموذج داخل تبويب معاينة النماذج
+                const previewContainer = document.getElementById('preview-container');
+                if (!previewContainer) return;
+                
+                // إخفاء جميع النماذج أولاً
+                document.querySelectorAll('.preview-form').forEach(form => {
+                    if (form) form.classList.add('hidden');
+                });
+                
+                // البحث عن النموذج المخصص أو إنشاؤه إذا لم يكن موجودًا
+                let customFormElement = document.getElementById(templateId);
+                if (!customFormElement) {
+                    customFormElement = document.createElement('div');
+                    customFormElement.id = templateId;
+                    customFormElement.className = 'preview-form hidden';
+                    previewContainer.appendChild(customFormElement);
+                }
+                
+                // تعيين محتوى النموذج مع استبدال المتغيرات
+                let templateContent = customTemplate.content;
+                
+                if (calculatedData && calculatedData.name) {
+                    // استبدال المتغيرات بقيم حقيقية
+                    templateContent = templateContent.replace(/\${name}/g, calculatedData.name);
+                    templateContent = templateContent.replace(/\${generalNumber}/g, calculatedData.generalNumber);
+                    templateContent = templateContent.replace(/\${idNumber}/g, calculatedData.idNumber || '');
+                    templateContent = templateContent.replace(/\${unit}/g, calculatedData.unit);
+                    templateContent = templateContent.replace(/\${oldRank}/g, calculatedData.oldRank);
+                    templateContent = templateContent.replace(/\${newRank}/g, calculatedData.newRank);
+                    templateContent = templateContent.replace(/\${startDate}/g, new Date(calculatedData.startDate).toLocaleDateString('ar-SA', { calendar: 'islamic' }));
+                    templateContent = templateContent.replace(/\${endDate}/g, new Date(calculatedData.endDate).toLocaleDateString('ar-SA', { calendar: 'islamic' }));
+                    
+                    if (calculatedData.commencementDate) {
+                        templateContent = templateContent.replace(/\${commencementDate}/g, new Date(calculatedData.commencementDate).toLocaleDateString('ar-SA', { calendar: 'islamic' }));
+                    }
+                    
+                    templateContent = templateContent.replace(/\${netDiff}/g, calculatedData.netDiff.toLocaleString('ar-SA'));
+                    templateContent = templateContent.replace(/\${daysDiff}/g, calculatedData.daysDiff.toString());
+                }
+                
+                customFormElement.innerHTML = templateContent;
+                customFormElement.classList.remove('hidden');
+                
+                // تحديث النسخة المطبوعة
+                const printDifferenceForm = document.getElementById('print-difference-form');
+                if (printDifferenceForm) {
+                    printDifferenceForm.innerHTML = templateContent;
+                }
+            }
+            
+            // =============== نهاية كود إدارة النماذج ===============
             
             // حذف القائمة
             function clearList() {
