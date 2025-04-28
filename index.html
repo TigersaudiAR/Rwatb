@@ -21,8 +21,8 @@
         }
       }
     </script>
-    <!-- إضافة TinyMCE بالإصدار المجاني -->
-    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    <!-- إضافة TinyMCE بطريقة تعمل بدون API Key -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.7.3/tinymce.min.js" integrity="sha512-vMJaE6Wc6yl1N6LkBek3CVxkVbwyY4J8XOUm9Gw2VM67VfMb/qLZXag/+HSoW4liLy9FQrGpUKHVJ9yt1Zs2cg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
       // تهيئة المحرر عند تحميل الصفحة
       document.addEventListener('DOMContentLoaded', function() {
@@ -36,6 +36,9 @@
             min_height: 400,
             promotion: false,
             branding: false,
+            menubar: true,
+            statusbar: true,
+            readonly: false,
             content_style: 'body { font-family: "Tajawal", sans-serif; }'
           });
         }
