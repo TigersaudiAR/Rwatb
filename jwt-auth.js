@@ -1,11 +1,11 @@
 
-/**
- * ملف مساعد للمصادقة JWT مع TinyMCE
- * يتضمن دوال لإنشاء توقيع JWT لاستخدامه مع TinyMCE
- */
+// استيراد jsonwebtoken (ملاحظة: هذا الكود يعمل في الخادم فقط)
+const jwt = require('jsonwebtoken');
 
-// مفتاح خاص RSA من المفاتيح التي تم إنشاؤها
-// تنبيه: في الإنتاج، لا تقم بتخزين المفتاح الخاص في الواجهة الأمامية
+/**
+ * المفتاح الخاص RSA للتوقيع
+ * تنبيه: في الإنتاج، لا تقم بتخزين المفتاح الخاص في الواجهة الأمامية
+ */
 const privateKey = `-----BEGIN RSA PRIVATE KEY-----
 MIIJKAIBAAKCAgEAsCxNENs+qXCfaKHqGRfAY24RLwLdG5MmEPEekShrQS+CqAgs
 4rKxjlb2f/tLd2uELhP5bI7jBGqByE9hhvfu9fW1Yc0xcQK3WK5bwSAa/nV1xa/W
@@ -58,56 +58,54 @@ rus/YKjb/fGNheBv8SvZlnIyAfaEiQbzcvAcTU0gkXukz1Kr+T/Poj77kDTB2iYy
 xULg/6BKwhB4XK+B7bcCBTM3xuSDZEnNqpPHey/mDAkvlwyUYRT3bjeoPuQ=
 -----END RSA PRIVATE KEY-----`;
 
-// مفتاح عام RSA من المفاتيح التي تم إنشاؤها
-const publicKey = `-----BEGIN RSA PUBLIC KEY-----
-MIICCgKCAgEAsCxNENs+qXCfaKHqGRfAY24RLwLdG5MmEPEekShrQS+CqAgs4rKx
-jlb2f/tLd2uELhP5bI7jBGqByE9hhvfu9fW1Yc0xcQK3WK5bwSAa/nV1xa/Wi5an
-6+cGx25kspDKGJRL6VN7DmgpE1wU9VwGqWsR4T3yfuuxmcLlQP3jQrmw76kBTkA3
-Ucy+aug1/8ZXta53XHBz9w8oCRL3XGGuo4r6sV35FJOgQQUZLG8HEr3eRdGSotcA
-GzHqhcelOitL6HoldafeLWU5p+JwIpZoBNzX+cFoT98ncUQZ/vyUMhVS3Uw46LZ7
-xFZi7tkp8PHcSc/0vhhLlJri1b/x36zBIYmON84C7NfiMGV90HZZHR/y52FScNMH
-KWa/XxSP89Vbl/f8fpjeEwgTINXow9E2O3hM6Z+RSGGzurI2fAWUlDf1vNaBZan+
-bEca6Cuj2p7Z3yoi3gVOi1icuuCs1uDcf7CqcbbC6BY/vbRefKaz47HwIsl8OTBI
-Q365oyWLmDnoUHnObfKBMibj+EKmQK93aO3LFzYS0j2MZtTzTnzIutOQDAHumL4c
-GOAH9RO0z2dHRcIVIIexf8qIRsi6xukG4o3mh3EC44/Qp7aLJNcVC+SK5NouCF7F
-5dDoWp4X4N8jDukmEiXZTwi/gQCk/RP/MXSliYkMR+Dom9d5D8N6i+MCAwEAAQ==
------END RSA PUBLIC KEY-----`;
-
-/**
- * إنشاء رمز JWT موقع باستخدام المفتاح الخاص
- * في الإنتاج، يجب أن تتم هذه العملية في الخادم وليس في المتصفح
- */
-function generateTinyMCEJWT() {
-  // ملاحظة: هذه نسخة مبسطة - في الإنتاج ستحتاج لاستخدام مكتبة لتوقيع JWT
-  // مثل jsonwebtoken في Node.js
-  
-  // بناء الرأس
-  const header = {
-    alg: "RS256",
-    typ: "JWT"
+// إعداد وظائف على جانب العميل للمتصفح
+if (typeof window !== 'undefined') {
+  /**
+   * إنشاء رمز JWT مؤقت للمتصفح
+   * ملاحظة: هذه ليست الطريقة الآمنة، في بيئة الإنتاج يجب توليد JWT من الخادم
+   */ 
+  window.generateTinyMCEJWT = function () {
+    const origin = window.location.origin;
+    const now = Math.floor(Date.now() / 1000);
+    
+    // محاكاة لتوليد JWT في المتصفح (بدون توقيع حقيقي)
+    // في بيئة الإنتاج: استخدم API لتوليد JWT من الخادم
+    return `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${btoa(
+      JSON.stringify({
+        sub: "user-123",
+        name: "Replit User",
+        origin: origin,
+        iat: now,
+        exp: now + 3600
+      })
+    )}.signature`;
   };
-  
-  // الحصول على الوقت الحالي بالثواني
-  const now = Math.floor(Date.now() / 1000);
-  
-  // بناء الحمولة
-  const payload = {
-    sub: "replit-user",           // معرف المستخدم
-    iat: now,                     // وقت الإصدار
-    exp: now + 3600,              // تاريخ انتهاء الصلاحية (ساعة واحدة من الآن)
-    origin: window.location.origin // المنشأ المسموح به
-  };
-  
-  // تشفير الرأس والحمولة بـ base64
-  const encodedHeader = btoa(JSON.stringify(header));
-  const encodedPayload = btoa(JSON.stringify(payload));
-  
-  // التوقيع سيتم في الخادم في الإنتاج
-  // هذا مجرد مثال وهمي للتوضيح
-  
-  // إرجاع رمز JWT بتنسيق header.payload.signature
-  return `${encodedHeader}.${encodedPayload}.signature`;
 }
 
-// إضافة الدالة للنطاق العالمي
-window.generateTinyMCEJWT = generateTinyMCEJWT;
+// إعداد وظائف على جانب الخادم لـ Node.js
+if (typeof module !== 'undefined') {
+  // دالة لإنشاء JWT حقيقي باستخدام المفتاح الخاص
+  function createJwtToken(origin) {
+    try {
+      const now = Math.floor(Date.now() / 1000);
+      
+      const payload = {
+        sub: "user-123",
+        name: "Replit User",
+        origin: origin,
+        iat: now,
+        exp: now + 3600
+      };
+      
+      return jwt.sign(payload, privateKey, { algorithm: 'RS256' });
+    } catch (error) {
+      console.error('خطأ في إنشاء JWT:', error);
+      return null;
+    }
+  }
+
+  // تصدير الدالة لاستخدامها في الخادم
+  module.exports = {
+    createJwtToken
+  };
+}

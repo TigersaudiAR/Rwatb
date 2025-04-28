@@ -10,5 +10,12 @@
   "dependencies": {
     "jsonwebtoken": "^9.0.2",
     "vite": "^5.4.8"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3",
+    "postcss-rtl": "^2.0.0",
+    "rtlcss": "^4.3.0",
+    "tailwindcss": "^4.1.4"
   }
 }

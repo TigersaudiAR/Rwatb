@@ -4,22 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام إدارة فروقات الترقية</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./main.css">
     <!-- إضافة TinyMCE -->
     <script src="https://cdn.tiny.cloud/1/yxedjbvfa9gsnyw4vvziuofp3ealf61azvlp5cpubt5vpnof/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="./jwt-auth.js"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#5D5CDE',
-                    },
-                    fontFamily: {
-                        'sans': ['Tajawal', 'sans-serif'],
-                    }
-                }
-            }
-        }
 
         // التحقق من الوضع المظلم
         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
@@ -2731,11 +2720,13 @@
                         plugins: [
                             'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists', 'media', 
                             'searchreplace', 'table', 'visualblocks', 'wordcount', 'checklist', 'mediaembed', 'casechange', 
-                            'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 
-                            'advtable', 'advcode', 'editimage', 'advtemplate', 'ai', 'mentions', 'tinycomments', 'tableofcontents', 
-                            'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown', 'importword', 'exportword', 'exportpdf'
+                            'formatpainter', 'pageembed', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 
+                            'advtable', 'advcode', 'editimage', 'advtemplate', 'mentions', 'tinycomments', 'tableofcontents', 
+                            'footnotes', 'autocorrect', 'typography', 'inlinecss', 'markdown'
                         ],
-                        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+                        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | addcomment showcomments | spellcheckdialog typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+                        api_key: 'yxedjbvfa9gsnyw4vvziuofp3ealf61azvlp5cpubt5vpnof',
+                        content_security_policy: "script-src 'self' cdn.tiny.cloud;",
                         directionality: 'rtl',
                         language: 'ar',
                         min_height: 400,
