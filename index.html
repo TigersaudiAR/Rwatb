@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="./main.css">
     <!-- إضافة TinyMCE بطريقة تعمل بدون API Key - النسخة المجانية المستضافة ذاتياً -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.7.3/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="./tinymce-ar.js"></script>
     <script>
       // تهيئة المحرر عند تحميل الصفحة - تأكد من تحميل TinyMCE أولاً
       window.addEventListener('load', function() {
@@ -24,7 +25,8 @@
             statusbar: true,
             readonly: false,
             forced_root_block: 'p',
-            content_style: 'body { font-family: "Tajawal", sans-serif; direction: rtl; }',style: 'body { font-family: "Tajawal", sans-serif; }'
+            content_style: 'body { font-family: "Tajawal", sans-serif; direction: rtl; }',
+            style: 'body { font-family: "Tajawal", sans-serif; }'
           });
         }
       });
