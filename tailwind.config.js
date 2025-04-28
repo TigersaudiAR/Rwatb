@@ -5,14 +5,38 @@ export default {
     "./index.html",
     "./**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        primary: '#5D5CDE',
+        primary: {
+          DEFAULT: '#5D5CDE',
+          light: '#7c7be7',
+          dark: '#4a49b0',
+        },
+        secondary: {
+          DEFAULT: '#6c757d',
+          light: '#858e96',
+          dark: '#565d64',
+        },
+        success: '#28a745',
+        info: '#17a2b8',
+        warning: '#ffc107',
+        danger: '#dc3545',
       },
       fontFamily: {
         'sans': ['Tajawal', 'sans-serif'],
-      }
+      },
+      fontSize: {
+        'xs': '0.75rem',
+        'sm': '0.875rem',
+        'base': '1rem',
+        'lg': '1.125rem',
+        'xl': '1.25rem',
+        '2xl': '1.5rem',
+        '3xl': '1.875rem',
+        '4xl': '2.25rem',
+      },
     },
   },
   plugins: [],

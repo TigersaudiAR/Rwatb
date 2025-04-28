@@ -12,9 +12,65 @@ body {
   font-family: 'Tajawal', sans-serif;
   direction: rtl;
   text-align: right;
+  background-color: #f8f9fa;
+  color: #333;
+}
+
+/* تحسينات للأزرار */
+button, .btn {
+  @apply py-2 px-4 rounded transition-colors;
+  background-color: #5D5CDE;
+  color: white;
+}
+
+button:hover, .btn:hover {
+  background-color: #4a49b0;
+}
+
+/* تحسينات للنماذج */
+input, select, textarea {
+  @apply p-2 border rounded outline-none;
+  border-color: #ddd;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #5D5CDE;
+}
+
+/* تحسينات للجداول */
+table {
+  @apply w-full border-collapse;
+}
+
+table th {
+  @apply bg-gray-100 p-2 border;
+}
+
+table td {
+  @apply p-2 border;
 }
 
 /* تحسينات للعناصر في dark mode */
 .dark {
   color-scheme: dark;
+  background-color: #1f2937;
+  color: #f3f4f6;
+}
+
+.dark button, .dark .btn {
+  background-color: #5D5CDE;
+}
+
+.dark input, .dark select, .dark textarea {
+  background-color: #374151;
+  color: #f3f4f6;
+  border-color: #4b5563;
+}
+
+.dark table th {
+  background-color: #374151;
+}
+
+.dark table td {
+  border-color: #4b5563;
 }

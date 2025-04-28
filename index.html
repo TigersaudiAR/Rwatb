@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام إدارة فروقات الترقية</title>
     <link rel="stylesheet" href="./main.css">
-    <!-- تم استيراد Tailwind عبر PostCSS بدلاً من CDN -->
-    <!-- إضافة TinyMCE بطريقة تعمل بدون API Key -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.7.3/tinymce.min.js" integrity="sha512-vMJaE6Wc6yl1N6LkBek3CVxkVbwyY4J8XOUm9Gw2VM67VfMb/qLZXag/+HSoW4liLy9FQrGpUKHVJ9yt1Zs2cg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- إضافة TinyMCE بطريقة تعمل بدون API Key - النسخة المجانية المستضافة ذاتياً -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.7.3/tinymce.min.js" referrerpolicy="origin"></script>
     <script>
       // تهيئة المحرر عند تحميل الصفحة - تأكد من تحميل TinyMCE أولاً
       window.addEventListener('load', function() {
@@ -24,7 +23,8 @@
             menubar: true,
             statusbar: true,
             readonly: false,
-            content_style: 'body { font-family: "Tajawal", sans-serif; }'
+            forced_root_block: 'p',
+            content_style: 'body { font-family: "Tajawal", sans-serif; direction: rtl; }',style: 'body { font-family: "Tajawal", sans-serif; }'
           });
         }
       });
