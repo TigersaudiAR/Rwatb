@@ -995,7 +995,14 @@
                 <h2 class="text-xl font-semibold mb-4">سلم الرواتب</h2>
                 
                 <div class="overflow-x-auto">
-                    <table class="form-table mb-4">
+                <div class="mb-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
+                        <button class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md" onclick="showSalaryRangeTable(1, 5)">الدرجات 1-5</button>
+                        <button class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md" onclick="showSalaryRangeTable(6, 10)">الدرجات 6-10</button>
+                        <button class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md" onclick="showSalaryRangeTable(11, 15)">الدرجات 11-15</button>
+                    </div>
+                    
+                    <table id="salary-table-1-5" class="form-table mb-4">
                         <thead>
                             <tr>
                                 <th>الرتبة / الدرجة</th>
@@ -1009,59 +1016,59 @@
                         <tbody>
                             <tr>
                                 <td>جندي</td>
-                                <td><input type="number" id="scale-جندي-1" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4990"></td>
-                                <td><input type="number" id="scale-جندي-2" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5190"></td>
-                                <td><input type="number" id="scale-جندي-3" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5390"></td>
-                                <td><input type="number" id="scale-جندي-4" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5590"></td>
-                                <td><input type="number" id="scale-جندي-5" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5790"></td>
+                                <td><input type="number" id="scale-جندي-1" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="3220"></td>
+                                <td><input type="number" id="scale-جندي-2" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="3350"></td>
+                                <td><input type="number" id="scale-جندي-3" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="3480"></td>
+                                <td><input type="number" id="scale-جندي-4" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="3610"></td>
+                                <td><input type="number" id="scale-جندي-5" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="3740"></td>
                             </tr>
                             <tr>
                                 <td>جندي أول</td>
-                                <td><input type="number" id="scale-جندي أول-1" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5370"></td>
-                                <td><input type="number" id="scale-جندي أول-2" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5580"></td>
-                                <td><input type="number" id="scale-جندي أول-3" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5790"></td>
-                                <td><input type="number" id="scale-جندي أول-4" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6000"></td>
-                                <td><input type="number" id="scale-جندي أول-5" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6210"></td>
+                                <td><input type="number" id="scale-جندي أول-1" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="3395"></td>
+                                <td><input type="number" id="scale-جندي أول-2" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="3540"></td>
+                                <td><input type="number" id="scale-جندي أول-3" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="3685"></td>
+                                <td><input type="number" id="scale-جندي أول-4" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="3830"></td>
+                                <td><input type="number" id="scale-جندي أول-5" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="3975"></td>
                             </tr>
                             <tr>
                                 <td>عريف</td>
-                                <td><input type="number" id="scale-عريف-1" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5790"></td>
-                                <td><input type="number" id="scale-عريف-2" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6010"></td>
-                                <td><input type="number" id="scale-عريف-3" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6230"></td>
-                                <td><input type="number" id="scale-عريف-4" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6450"></td>
-                                <td><input type="number" id="scale-عريف-5" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6670"></td>
+                                <td><input type="number" id="scale-عريف-1" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="3765"></td>
+                                <td><input type="number" id="scale-عريف-2" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="3940"></td>
+                                <td><input type="number" id="scale-عريف-3" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4115"></td>
+                                <td><input type="number" id="scale-عريف-4" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4290"></td>
+                                <td><input type="number" id="scale-عريف-5" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4465"></td>
                             </tr>
                             <tr>
                                 <td>وكيل رقيب</td>
-                                <td><input type="number" id="scale-وكيل رقيب-1" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6300"></td>
-                                <td><input type="number" id="scale-وكيل رقيب-2" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6540"></td>
-                                <td><input type="number" id="scale-وكيل رقيب-3" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6770"></td>
-                                <td><input type="number" id="scale-وكيل رقيب-4" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7010"></td>
-                                <td><input type="number" id="scale-وكيل رقيب-5" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7240"></td>
+                                <td><input type="number" id="scale-وكيل رقيب-1" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4455"></td>
+                                <td><input type="number" id="scale-وكيل رقيب-2" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4665"></td>
+                                <td><input type="number" id="scale-وكيل رقيب-3" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4875"></td>
+                                <td><input type="number" id="scale-وكيل رقيب-4" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5080"></td>
+                                <td><input type="number" id="scale-وكيل رقيب-5" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5295"></td>
                             </tr>
                             <tr>
                                 <td>رقيب</td>
-                                <td><input type="number" id="scale-رقيب-1" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6870"></td>
-                                <td><input type="number" id="scale-رقيب-2" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7120"></td>
-                                <td><input type="number" id="scale-رقيب-3" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7370"></td>
-                                <td><input type="number" id="scale-رقيب-4" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7620"></td>
-                                <td><input type="number" id="scale-رقيب-5" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7870"></td>
+                                <td><input type="number" id="scale-رقيب-1" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5260"></td>
+                                <td><input type="number" id="scale-رقيب-2" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5510"></td>
+                                <td><input type="number" id="scale-رقيب-3" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5760"></td>
+                                <td><input type="number" id="scale-رقيب-4" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6010"></td>
+                                <td><input type="number" id="scale-رقيب-5" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6260"></td>
                             </tr>
                             <tr>
                                 <td>رقيب أول</td>
-                                <td><input type="number" id="scale-رقيب أول-1" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7500"></td>
-                                <td><input type="number" id="scale-رقيب أول-2" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7770"></td>
-                                <td><input type="number" id="scale-رقيب أول-3" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="8040"></td>
-                                <td><input type="number" id="scale-رقيب أول-4" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="8310"></td>
-                                <td><input type="number" id="scale-رقيب أول-5" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="8580"></td>
+                                <td><input type="number" id="scale-رقيب أول-1" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6180"></td>
+                                <td><input type="number" id="scale-رقيب أول-2" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6480"></td>
+                                <td><input type="number" id="scale-رقيب أول-3" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6780"></td>
+                                <td><input type="number" id="scale-رقيب أول-4" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7080"></td>
+                                <td><input type="number" id="scale-رقيب أول-5" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7380"></td>
                             </tr>
                             <tr>
                                 <td>رئيس رقباء</td>
-                                <td><input type="number" id="scale-رئيس رقباء-1" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="8180"></td>
-                                <td><input type="number" id="scale-رئيس رقباء-2" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="8470"></td>
-                                <td><input type="number" id="scale-رئيس رقباء-3" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="8760"></td>
-                                <td><input type="number" id="scale-رئيس رقباء-4" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="9050"></td>
-                                <td><input type="number" id="scale-رئيس رقباء-5" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="9340"></td>
+                                <td><input type="number" id="scale-رئيس رقباء-1" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7215"></td>
+                                <td><input type="number" id="scale-رئيس رقباء-2" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7575"></td>
+                                <td><input type="number" id="scale-رئيس رقباء-3" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7935"></td>
+                                <td><input type="number" id="scale-رئيس رقباء-4" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="8295"></td>
+                                <td><input type="number" id="scale-رئيس رقباء-5" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="8655"></td>
                             </tr>
                             <tr>
                                 <td>ملازم</td>
@@ -1070,6 +1077,164 @@
                                 <td><input type="number" id="scale-ملازم-3" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="10760"></td>
                                 <td><input type="number" id="scale-ملازم-4" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="11130"></td>
                                 <td><input type="number" id="scale-ملازم-5" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="11500"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <table id="salary-table-6-10" class="form-table mb-4 hidden">
+                        <thead>
+                            <tr>
+                                <th>الرتبة / الدرجة</th>
+                                <th>6</th>
+                                <th>7</th>
+                                <th>8</th>
+                                <th>9</th>
+                                <th>10</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>جندي</td>
+                                <td><input type="number" id="scale-جندي-6" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="3870"></td>
+                                <td><input type="number" id="scale-جندي-7" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4000"></td>
+                                <td><input type="number" id="scale-جندي-8" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4130"></td>
+                                <td><input type="number" id="scale-جندي-9" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4260"></td>
+                                <td><input type="number" id="scale-جندي-10" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4390"></td>
+                            </tr>
+                            <tr>
+                                <td>جندي أول</td>
+                                <td><input type="number" id="scale-جندي أول-6" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4120"></td>
+                                <td><input type="number" id="scale-جندي أول-7" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4265"></td>
+                                <td><input type="number" id="scale-جندي أول-8" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4410"></td>
+                                <td><input type="number" id="scale-جندي أول-9" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4555"></td>
+                                <td><input type="number" id="scale-جندي أول-10" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4700"></td>
+                            </tr>
+                            <tr>
+                                <td>عريف</td>
+                                <td><input type="number" id="scale-عريف-6" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4640"></td>
+                                <td><input type="number" id="scale-عريف-7" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4815"></td>
+                                <td><input type="number" id="scale-عريف-8" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4990"></td>
+                                <td><input type="number" id="scale-عريف-9" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5165"></td>
+                                <td><input type="number" id="scale-عريف-10" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5340"></td>
+                            </tr>
+                            <tr>
+                                <td>وكيل رقيب</td>
+                                <td><input type="number" id="scale-وكيل رقيب-6" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5505"></td>
+                                <td><input type="number" id="scale-وكيل رقيب-7" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5715"></td>
+                                <td><input type="number" id="scale-وكيل رقيب-8" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5925"></td>
+                                <td><input type="number" id="scale-وكيل رقيب-9" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6135"></td>
+                                <td><input type="number" id="scale-وكيل رقيب-10" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6345"></td>
+                            </tr>
+                            <tr>
+                                <td>رقيب</td>
+                                <td><input type="number" id="scale-رقيب-6" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6510"></td>
+                                <td><input type="number" id="scale-رقيب-7" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6760"></td>
+                                <td><input type="number" id="scale-رقيب-8" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7010"></td>
+                                <td><input type="number" id="scale-رقيب-9" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7260"></td>
+                                <td><input type="number" id="scale-رقيب-10" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7510"></td>
+                            </tr>
+                            <tr>
+                                <td>رقيب أول</td>
+                                <td><input type="number" id="scale-رقيب أول-6" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7680"></td>
+                                <td><input type="number" id="scale-رقيب أول-7" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7980"></td>
+                                <td><input type="number" id="scale-رقيب أول-8" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="8280"></td>
+                                <td><input type="number" id="scale-رقيب أول-9" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="8580"></td>
+                                <td><input type="number" id="scale-رقيب أول-10" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="8880"></td>
+                            </tr>
+                            <tr>
+                                <td>رئيس رقباء</td>
+                                <td><input type="number" id="scale-رئيس رقباء-6" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="9015"></td>
+                                <td><input type="number" id="scale-رئيس رقباء-7" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="9375"></td>
+                                <td><input type="number" id="scale-رئيس رقباء-8" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="9735"></td>
+                                <td><input type="number" id="scale-رئيس رقباء-9" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="10095"></td>
+                                <td><input type="number" id="scale-رئيس رقباء-10" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="10455"></td>
+                            </tr>
+                            <tr>
+                                <td>ملازم</td>
+                                <td><input type="number" id="scale-ملازم-6" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="11870"></td>
+                                <td><input type="number" id="scale-ملازم-7" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="12240"></td>
+                                <td><input type="number" id="scale-ملازم-8" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="12610"></td>
+                                <td><input type="number" id="scale-ملازم-9" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="12980"></td>
+                                <td><input type="number" id="scale-ملازم-10" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="13350"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <table id="salary-table-11-15" class="form-table mb-4 hidden">
+                        <thead>
+                            <tr>
+                                <th>الرتبة / الدرجة</th>
+                                <th>11</th>
+                                <th>12</th>
+                                <th>13</th>
+                                <th>14</th>
+                                <th>15</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>جندي</td>
+                                <td><input type="number" id="scale-جندي-11" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4520"></td>
+                                <td><input type="number" id="scale-جندي-12" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4750"></td>
+                                <td><input type="number" id="scale-جندي-13" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4780"></td>
+                                <td><input type="number" id="scale-جندي-14" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4910"></td>
+                                <td><input type="number" id="scale-جندي-15" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5040"></td>
+                            </tr>
+                            <tr>
+                                <td>جندي أول</td>
+                                <td><input type="number" id="scale-جندي أول-11" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4845"></td>
+                                <td><input type="number" id="scale-جندي أول-12" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="4990"></td>
+                                <td><input type="number" id="scale-جندي أول-13" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5135"></td>
+                                <td><input type="number" id="scale-جندي أول-14" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5280"></td>
+                                <td><input type="number" id="scale-جندي أول-15" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5425"></td>
+                            </tr>
+                            <tr>
+                                <td>عريف</td>
+                                <td><input type="number" id="scale-عريف-11" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5515"></td>
+                                <td><input type="number" id="scale-عريف-12" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5690"></td>
+                                <td><input type="number" id="scale-عريف-13" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="5865"></td>
+                                <td><input type="number" id="scale-عريف-14" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6040"></td>
+                                <td><input type="number" id="scale-عريف-15" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6215"></td>
+                            </tr>
+                            <tr>
+                                <td>وكيل رقيب</td>
+                                <td><input type="number" id="scale-وكيل رقيب-11" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6555"></td>
+                                <td><input type="number" id="scale-وكيل رقيب-12" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6765"></td>
+                                <td><input type="number" id="scale-وكيل رقيب-13" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="6975"></td>
+                                <td><input type="number" id="scale-وكيل رقيب-14" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7185"></td>
+                                <td><input type="number" id="scale-وكيل رقيب-15" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7395"></td>
+                            </tr>
+                            <tr>
+                                <td>رقيب</td>
+                                <td><input type="number" id="scale-رقيب-11" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="7760"></td>
+                                <td><input type="number" id="scale-رقيب-12" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="8010"></td>
+                                <td><input type="number" id="scale-رقيب-13" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="8260"></td>
+                                <td><input type="number" id="scale-رقيب-14" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="8510"></td>
+                                <td><input type="number" id="scale-رقيب-15" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="8760"></td>
+                            </tr>
+                            <tr>
+                                <td>رقيب أول</td>
+                                <td><input type="number" id="scale-رقيب أول-11" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="9180"></td>
+                                <td><input type="number" id="scale-رقيب أول-12" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="9480"></td>
+                                <td><input type="number" id="scale-رقيب أول-13" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="9780"></td>
+                                <td><input type="number" id="scale-رقيب أول-14" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="10080"></td>
+                                <td><input type="number" id="scale-رقيب أول-15" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="10380"></td>
+                            </tr>
+                            <tr>
+                                <td>رئيس رقباء</td>
+                                <td><input type="number" id="scale-رئيس رقباء-11" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="10815"></td>
+                                <td><input type="number" id="scale-رئيس رقباء-12" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="11175"></td>
+                                <td><input type="number" id="scale-رئيس رقباء-13" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="11535"></td>
+                                <td><input type="number" id="scale-رئيس رقباء-14" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="11895"></td>
+                                <td><input type="number" id="scale-رئيس رقباء-15" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="12255"></td>
+                            </tr>
+                            <tr>
+                                <td>ملازم</td>
+                                <td><input type="number" id="scale-ملازم-11" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="13720"></td>
+                                <td><input type="number" id="scale-ملازم-12" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="14090"></td>
+                                <td><input type="number" id="scale-ملازم-13" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="14460"></td>
+                                <td><input type="number" id="scale-ملازم-14" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="14830"></td>
+                                <td><input type="number" id="scale-ملازم-15" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md" min="0" value="15200"></td>
                             </tr>
                         </tbody>
                     </table>
