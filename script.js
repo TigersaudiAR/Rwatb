@@ -721,9 +721,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // وظائف إضافية خارج نطاق DOMContentLoaded
-
 // تحديث جدول الأشخاص
-function updatePeopleTable() {
+window.updatePeopleTable = function() {
     const tableBody = document.querySelector('#people-table tbody');
     if (!tableBody) return;
     
@@ -769,10 +768,10 @@ function updatePeopleTable() {
         `;
         tableBody.appendChild(row);
     });
-}
+};
 
 // حذف شخص من القائمة
-function deletePersonFromList(personId) {
+window.deletePersonFromList = function(personId) {
     if (!confirm('هل أنت متأكد من حذف هذا الشخص من القائمة؟')) return;
     
     const personIndex = window.peopleList.findIndex(person => person.id === personId);
@@ -780,15 +779,15 @@ function deletePersonFromList(personId) {
         window.peopleList.splice(personIndex, 1);
         
         // حفظ القائمة في localStorage
-        savePeopleList();
+        window.savePeopleList();
         
         // تحديث عرض القائمة
-        updatePeopleTable();
+        window.updatePeopleTable();
     }
-}
+};
 
 // تحميل بيانات شخص من القائمة
-function loadPersonData(personId) {
+window.loadPersonData = function(personId) {
     const person = window.peopleList.find(p => p.id === personId);
     if (!person) return;
     
@@ -801,19 +800,19 @@ function loadPersonData(personId) {
     
     // الانتقال إلى تبويب إدخال البيانات
     window.switchTab('data');
-}
+};
 
 // حفظ قائمة الأشخاص في localStorage
-function savePeopleList() {
+window.savePeopleList = function() {
     try {
         localStorage.setItem('peopleList', JSON.stringify(window.peopleList));
     } catch (error) {
         console.error('خطأ في حفظ القائمة:', error);
     }
-}
+};
 
 // حفظ سلم الرواتب في localStorage
-function saveSalaryScale() {
+window.saveSalaryScale = function() {
     try {
         const ranks = ["جندي", "جندي أول", "عريف", "وكيل رقيب", "رقيب", "رقيب أول", "رئيس رقباء", "ملازم"];
         const salaryScale = {};
@@ -835,10 +834,10 @@ function saveSalaryScale() {
         console.error('خطأ في حفظ سلم الرواتب:', error);
         alert('حدث خطأ أثناء حفظ سلم الرواتب');
     }
-}
+};
 
 // تحميل سلم الرواتب من localStorage
-function loadSalaryScale() {
+window.loadSalaryScale = function() {
     try {
         const savedScale = localStorage.getItem('salaryScale');
         if (savedScale) {
@@ -857,10 +856,10 @@ function loadSalaryScale() {
     } catch (error) {
         console.error('خطأ في تحميل سلم الرواتب:', error);
     }
-}
+};
 
 // تحديث إعدادات العرض
-function toggleDisplaySetting(settingName, value) {
+window.toggleDisplaySetting = function(settingName, value) {
     if (settingName === 'showZeroRows') {
         window.appSettings.display.showZeroRows = value;
         
@@ -877,17 +876,17 @@ function toggleDisplaySetting(settingName, value) {
     
     // إعادة عرض النموذج الحالي
     if (document.getElementById('difference-form').classList.contains('hidden')) {
-        previewDeclarationForm();
+        window.previewDeclarationForm();
     } else {
-        previewDifferenceForm();
+        window.previewDifferenceForm();
     }
     
     // حفظ الإعدادات
     window.saveSettings();
-}
+};
 
 // تحديث إعدادات الحساب التلقائي
-function updateCalculationSetting(settingType, value) {
+window.updateCalculationSetting = function(settingType, value) {
     // تحديث الإعدادات
     if (settingType === 'terrorism') {
         window.appSettings.calculation.autoTerrorism = value;
@@ -908,10 +907,10 @@ function updateCalculationSetting(settingType, value) {
     
     // حفظ الإعدادات
     window.saveSettings();
-}
+};
 
 // تحديث إعدادات النظام
-function updateSetting(category, name, value) {
+window.updateSetting = function(category, name, value) {
     if (category === 'display') {
         window.appSettings.display[name] = value;
     } else if (category === 'calculation') {
@@ -924,10 +923,10 @@ function updateSetting(category, name, value) {
             document.getElementById('unit').value = value;
         }
     }
-}
+};
 
 // أمثلة لدوال أخرى
-function showAddAllowanceModal() {
+window.showAddAllowanceModal = function() {
     const modal = document.getElementById('add-allowance-modal');
     if (modal) modal.classList.remove('hidden');
     
@@ -945,15 +944,15 @@ function showAddAllowanceModal() {
     if (newAmountInput) newAmountInput.value = '';
     
     // تحديث حقول نوع البدل
-    updateAllowanceTypeFields();
-}
+    window.updateAllowanceTypeFields();
+};
 
-function hideAddAllowanceModal() {
+window.hideAddAllowanceModal = function() {
     const modal = document.getElementById('add-allowance-modal');
     if (modal) modal.classList.add('hidden');
-}
+};
 
-function updateAllowanceTypeFields() {
+window.updateAllowanceTypeFields = function() {
     const allowanceType = document.getElementById('allowance-type').value;
     const percentageContainer = document.getElementById('percentage-container');
     const fixedAmountContainer = document.getElementById('fixed-amount-container');
@@ -981,9 +980,9 @@ function updateAllowanceTypeFields() {
         customSearchContainer.classList.remove('hidden');
         allowanceTypeDescription.textContent = 'يتم البحث عن البدل بناءً على معايير البحث المخصصة';
     }
-}
+};
 
-function previewCustomSearch() {
+window.previewCustomSearch = function() {
     const oldRank = document.getElementById('old-rank').value;
     const newRank = document.getElementById('new-rank').value;
     const oldDegree = document.getElementById('old-degree').value;
@@ -1071,10 +1070,809 @@ function previewCustomSearch() {
     } else {
         previewNewAmountElement.textContent = "غير موجود";
     }
-}
+};
 
-function addNewAllowance() {
-    // يمكن تنفيذ هذه الدالة هنا أو استخدام window.addNewAllowance
-}
+window.addNewAllowance = function() {
+    const allowanceNameInput = document.getElementById('allowance-name');
+    const allowanceTypeSelect = document.getElementById('allowance-type');
+    
+    if (!allowanceNameInput || !allowanceTypeSelect) {
+        console.error("لم يتم العثور على عناصر إضافة البدل");
+        return;
+    }
+    
+    const allowanceName = allowanceNameInput.value.trim();
+    const allowanceType = allowanceTypeSelect.value;
+    
+    if (!allowanceName) {
+        alert('يرجى إدخال اسم البدل');
+        return;
+    }
+    
+    let oldValue = 0;
+    let newValue = 0;
+    
+    if (allowanceType === 'fixed') {
+        const oldAmountInput = document.getElementById('allowance-amount-old');
+        const newAmountInput = document.getElementById('allowance-amount-new');
+        
+        if (oldAmountInput && newAmountInput) {
+            oldValue = Number(oldAmountInput.value) || 0;
+            newValue = Number(newAmountInput.value) || 0;
+        }
+    } else if (allowanceType === 'custom') {
+        // استخدام البحث المخصص
+        const oldRank = document.getElementById('old-rank').value;
+        const newRank = document.getElementById('new-rank').value;
+        const oldDegree = document.getElementById('old-degree').value;
+        const newDegree = document.getElementById('new-degree').value;
+        
+        // البحث عن رتبة ودرجة البدل السابق
+        const searchRankOldSelect = document.getElementById('search-rank-old');
+        const searchDegreeOldSelect = document.getElementById('search-degree-old');
+        
+        if (!searchRankOldSelect || !searchDegreeOldSelect) {
+            console.error("لم يتم العثور على عناصر البحث المخصص");
+            return;
+        }
+        
+        let searchRankOld = searchRankOldSelect.value;
+        let searchDegreeOld = searchDegreeOldSelect.value;
+        
+        // إذا كانت الرتبة هي "نفس الرتبة السابقة" أو "نفس الرتبة الحالية"
+        if (searchRankOld === 'old-rank') {
+            searchRankOld = oldRank;
+        } else if (searchRankOld === 'new-rank') {
+            searchRankOld = newRank;
+        }
+        
+        // إذا كانت الدرجة هي "نفس الدرجة السابقة"
+        if (searchDegreeOld === 'old-degree') {
+            searchDegreeOld = oldDegree;
+        }
+        
+        // البحث عن رتبة ودرجة البدل الحالي
+        const searchRankNewSelect = document.getElementById('search-rank-new');
+        const searchDegreeNewSelect = document.getElementById('search-degree-new');
+        
+        if (!searchRankNewSelect || !searchDegreeNewSelect) {
+            console.error("لم يتم العثور على عناصر البحث المخصص");
+            return;
+        }
+        
+        let searchRankNew = searchRankNewSelect.value;
+        let searchDegreeNew = searchDegreeNewSelect.value;
+        
+        // إذا كانت الرتبة هي "نفس الرتبة السابقة" أو "نفس الرتبة الحالية"
+        if (searchRankNew === 'old-rank') {
+            searchRankNew = oldRank;
+        } else if (searchRankNew === 'new-rank') {
+            searchRankNew = newRank;
+        }
+        
+        // إذا كانت الدرجة هي "نفس الدرجة الحالية"
+        if (searchDegreeNew === 'new-degree') {
+            searchDegreeNew = newDegree;
+        }
+        
+        // البحث عن القيم في سلم الرواتب
+        const oldScaleElement = document.getElementById(`scale-${searchRankOld}-${searchDegreeOld}`);
+        const newScaleElement = document.getElementById(`scale-${searchRankNew}-${searchDegreeNew}`);
+        
+        // التحقق من وجود العناصر
+        if (oldScaleElement) {
+            oldValue = Number(oldScaleElement.value) || 0;
+        }
+        
+        if (newScaleElement) {
+            newValue = Number(newScaleElement.value) || 0;
+        }
+        
+        // تطبيق النسبة المئوية
+        const percentageElement = document.getElementById('allowance-custom-percentage');
+        const percentage = percentageElement ? (Number(percentageElement.value) || 100) : 100;
+        
+        oldValue = Math.round(oldValue * percentage / 100);
+        newValue = Math.round(newValue * percentage / 100);
+        
+    } else {
+        const percentageInput = document.getElementById('allowance-percentage');
+        if (!percentageInput) {
+            console.error("لم يتم العثور على عنصر النسبة المئوية");
+            return;
+        }
+        
+        const percentage = Number(percentageInput.value) || 0;
+        const oldRank = document.getElementById('old-rank').value;
+        const newRank = document.getElementById('new-rank').value;
+        
+        if (allowanceType === 'first-degree') {
+            // نسبة من راتب الدرجة الأولى
+            const oldRankFirstDegreeElement = document.getElementById(`scale-${oldRank}-1`);
+            const newRankFirstDegreeElement = document.getElementById(`scale-${newRank}-1`);
+            
+            if (oldRankFirstDegreeElement && newRankFirstDegreeElement) {
+                const oldRankFirstDegreeSalary = Number(oldRankFirstDegreeElement.value) || 0;
+                const newRankFirstDegreeSalary = Number(newRankFirstDegreeElement.value) || 0;
+                
+                oldValue = Math.round(oldRankFirstDegreeSalary * (percentage / 100));
+                newValue = Math.round(newRankFirstDegreeSalary * (percentage / 100));
+            }
+        } else {
+            // نسبة من راتب الدرجة الحالية
+            const oldBasicSalaryInput = document.getElementById('old-basic-salary');
+            const newBasicSalaryInput = document.getElementById('new-basic-salary');
+            
+            if (oldBasicSalaryInput && newBasicSalaryInput) {
+                const oldBasicSalary = Number(oldBasicSalaryInput.value) || 0;
+                const newBasicSalary = Number(newBasicSalaryInput.value) || 0;
+                
+                oldValue = Math.round(oldBasicSalary * (percentage / 100));
+                newValue = Math.round(newBasicSalary * (percentage / 100));
+            }
+        }
+    }
+    
+    // إضافة البدل إلى الجدول مع زر حذف
+    const tableBody = document.querySelector('#allowances-table tbody');
+    if (!tableBody) {
+        console.error("لم يتم العثور على جدول البدلات");
+        return;
+    }
+    
+    const allowanceId = Date.now().toString();
+    const newRow = document.createElement('tr');
+    newRow.setAttribute('data-row-id', allowanceId);
+    newRow.setAttribute('data-type', 'allowance');
+    
+    // التحقق مما إذا كان يجب إظهار زر الحذف
+    const showDeleteButton = document.getElementById('change-type').value !== 'ترقية';
+    
+    newRow.innerHTML = `
+        <td class="relative">
+            ${allowanceName}
+        </td>
+        <td><input type="number" id="old-${allowanceId}" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" value="${oldValue}" min="0"></td>
+        <td><input type="number" id="new-${allowanceId}" class="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-base" value="${newValue}" min="0"></td>
+        <td class="delete-column" style="display: ${showDeleteButton ? 'table-cell' : 'none'};">
+            <span class="delete-row-btn" onclick="hideRow('${allowanceId}')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </span>
+        </td>
+    `;
+    tableBody.appendChild(newRow);
+    
+    // تخزين البدل للاستخدام لاحقًا
+    window.customAllowances.push({
+        id: allowanceId,
+        name: allowanceName,
+        type: allowanceType,
+        percentage: allowanceType !== 'fixed' ? (Number(document.getElementById('allowance-percentage')?.value) || 0) : 0
+    });
+    
+    window.hideAddAllowanceModal();
+};
 
-// وهكذا لباقي الدوال...
+window.calculateDifferences = function() {
+    const nameInput = document.getElementById('name');
+    const generalNumberInput = document.getElementById('general-number');
+    const unitInput = document.getElementById('unit');
+    
+    if (!nameInput || !generalNumberInput || !unitInput) {
+        console.error("لم يتم العثور على حقول البيانات الأساسية");
+        return;
+    }
+    
+    const name = nameInput.value.trim();
+    const generalNumber = generalNumberInput.value.trim();
+    const unit = unitInput.value.trim();
+    
+    if (!name || !generalNumber || !unit) {
+        alert('يرجى إدخال الاسم والرقم العام والوحدة');
+        return;
+    }
+    
+    // الحصول على تواريخ الحسبة
+    const startDateInput = document.getElementById('start-date');
+    const endDateInput = document.getElementById('end-date');
+    
+    if (!startDateInput || !endDateInput) {
+        console.error("لم يتم العثور على حقول التواريخ");
+        return;
+    }
+    
+    const startDate = new Date(startDateInput.value);
+    const endDate = new Date(endDateInput.value);
+    
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        alert('يرجى إدخال تاريخ بداية ونهاية الحسبة');
+        return;
+    }
+    
+    // حساب عدد الأيام 
+    const daysDiff = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1; // إضافة 1 لتضمين اليوم الأخير
+    
+    // جمع معلومات الرتبة
+    const oldRankSelect = document.getElementById('old-rank');
+    const newRankSelect = document.getElementById('new-rank');
+    
+    if (!oldRankSelect || !newRankSelect) {
+        console.error("لم يتم العثور على عناصر الرتبة");
+        return;
+    }
+    
+    const oldRank = oldRankSelect.value;
+    const newRank = newRankSelect.value;
+    
+    // جمع جميع البدلات والحسميات
+    const allowances = [];
+    const deductions = [];
+    
+    // جمع الراتب الأساسي ومكافحة الإرهاب وعلاوة الأمن
+    const oldBasicSalary = Number(document.getElementById('old-basic-salary').value) || 0;
+    const newBasicSalary = Number(document.getElementById('new-basic-salary').value) || 0;
+    
+    const basicDiff = newBasicSalary - oldBasicSalary;
+    const basicDiffAmount = parseFloat(((basicDiff / 30) * daysDiff).toFixed(2));
+    
+    // إضافة الراتب الأساسي فقط إذا كان الصف غير مخفي
+    if (!window.hiddenRows.has('basic-salary')) {
+        if (basicDiffAmount > 0) {
+            allowances.push({
+                type: "الراتب الأساسي",
+                oldAmount: oldBasicSalary,
+                newAmount: newBasicSalary,
+                days: daysDiff,
+                diffAmount: basicDiffAmount
+            });
+        } else if (basicDiffAmount < 0) {
+            deductions.push({
+                type: "الراتب الأساسي",
+                oldAmount: oldBasicSalary,
+                newAmount: newBasicSalary,
+                days: daysDiff,
+                diffAmount: Math.abs(basicDiffAmount)
+            });
+        }
+    }
+    
+    // إضافة بدل مكافحة الإرهاب إذا لم يكن مخفيًا
+    if (!window.hiddenRows.has('terrorism')) {
+        const oldTerrorism = Number(document.getElementById('old-terrorism').value) || 0;
+        const newTerrorism = Number(document.getElementById('new-terrorism').value) || 0;
+        const terrorismDiff = newTerrorism - oldTerrorism;
+        const terrorismDiffAmount = parseFloat(((terrorismDiff / 30) * daysDiff).toFixed(2));
+        
+        if (terrorismDiffAmount > 0) {
+            allowances.push({
+                type: "بدل مكافحة الإرهاب",
+                oldAmount: oldTerrorism,
+                newAmount: newTerrorism,
+                days: daysDiff,
+                diffAmount: terrorismDiffAmount
+            });
+        } else if (terrorismDiffAmount < 0) {
+            deductions.push({
+                type: "بدل مكافحة الإرهاب",
+                oldAmount: oldTerrorism,
+                newAmount: newTerrorism,
+                days: daysDiff,
+                diffAmount: Math.abs(terrorismDiffAmount)
+            });
+        }
+    }
+    
+    // إضافة علاوة الأمن إذا لم تكن مخفية
+    if (!window.hiddenRows.has('security')) {
+        const oldSecurity = Number(document.getElementById('old-security').value) || 0;
+        const newSecurity = Number(document.getElementById('new-security').value) || 0;
+        const securityDiff = newSecurity - oldSecurity;
+        const securityDiffAmount = parseFloat(((securityDiff / 30) * daysDiff).toFixed(2));
+        
+        if (securityDiffAmount > 0) {
+            allowances.push({
+                type: "علاوة الأمن (شرطة عسكرية)",
+                oldAmount: oldSecurity,
+                newAmount: newSecurity,
+                days: daysDiff,
+                diffAmount: securityDiffAmount
+            });
+        } else if (securityDiffAmount < 0) {
+            deductions.push({
+                type: "علاوة الأمن (شرطة عسكرية)",
+                oldAmount: oldSecurity,
+                newAmount: newSecurity,
+                days: daysDiff,
+                diffAmount: Math.abs(securityDiffAmount)
+            });
+        }
+    }
+    
+    // إضافة حسم التقاعد إذا لم يكن مخفيًا
+    if (!window.hiddenRows.has('retirement')) {
+        const oldRetirement = Number(document.getElementById('old-retirement').value) || 0;
+        const newRetirement = Number(document.getElementById('new-retirement').value) || 0;
+        const retirementDiff = newRetirement - oldRetirement;
+        const retirementDiffAmount = parseFloat(((retirementDiff / 30) * daysDiff).toFixed(2));
+        
+        if (retirementDiffAmount > 0) {
+            deductions.push({
+                type: "التقاعد",
+                oldAmount: oldRetirement,
+                newAmount: newRetirement,
+                days: daysDiff,
+                diffAmount: retirementDiffAmount
+            });
+        } else if (retirementDiffAmount < 0) {
+            allowances.push({
+                type: "التقاعد",
+                oldAmount: oldRetirement,
+                newAmount: newRetirement,
+                days: daysDiff,
+                diffAmount: Math.abs(retirementDiffAmount)
+            });
+        }
+    }
+    
+    // جمع البدلات المخصصة
+    document.querySelectorAll('#allowances-table tbody tr[data-allowance-id]').forEach(row => {
+        if (row.style.display === 'none') return; // تجاهل الصفوف المخفية
+        
+        if (!row.cells || row.cells.length < 3) return;
+        
+        const name = row.cells[0].textContent.trim();
+        const inputs = row.querySelectorAll('input');
+        
+        if (inputs.length < 2) return;
+        
+        const oldAmount = Number(inputs[0].value) || 0;
+        const newAmount = Number(inputs[1].value) || 0;
+        
+        // حساب الفرق
+        const diff = newAmount - oldAmount;
+        const diffAmount = Math.round(((diff / 30) * daysDiff));
+        
+        // تصنيف البدل بناءً على الفرق
+        if (diffAmount > 0) {
+            allowances.push({
+                type: name,
+                oldAmount,
+                newAmount,
+                days: daysDiff,
+                diffAmount: diffAmount
+            });
+        } else if (diffAmount < 0) {
+            deductions.push({
+                type: name,
+                oldAmount,
+                newAmount,
+                days: daysDiff,
+                diffAmount: Math.abs(diffAmount)
+            });
+        }
+    });
+    
+    // حساب إجمالي الفروقات والحسميات
+    let totalPositiveDiff = 0;
+    let totalNegativeDiff = 0;
+    
+    allowances.forEach(item => {
+        totalPositiveDiff += item.diffAmount;
+    });
+    
+    deductions.forEach(item => {
+        totalNegativeDiff += item.diffAmount;
+    });
+    
+    // حساب صافي الفروقات
+    const netDiff = totalPositiveDiff - totalNegativeDiff;
+    window.differenceTotal = netDiff;
+    
+    // تخزين النتائج للعرض لاحقًا
+    window.calculatedData = {
+        name,
+        generalNumber,
+        idNumber: document.getElementById('id-number')?.value.trim() || '',
+        unit,
+        commencementDate: document.getElementById('commencement-date')?.value || '',
+        startDate: startDateInput.value,
+        endDate: endDateInput.value,
+        oldRank,
+        newRank,
+        oldDegree: document.getElementById('old-degree')?.value || '1',
+        newDegree: document.getElementById('new-degree')?.value || '1',
+        daysDiff,
+        differences: allowances,
+        deductions: deductions,
+        totalPositiveDiff,
+        totalNegativeDiff,
+        netDiff
+    };
+
+    // تبديل إلى نموذج فروقات الترقية
+    window.switchTab('forms');
+    window.previewDifferenceForm();
+};
+
+// عرض نموذج فروقات الترقية - يعرض الصفوف الصفرية حسب الإعدادات
+window.previewDifferenceForm = function() {
+    if (!window.calculatedData.name) {
+        alert('يرجى حساب الفروقات أولاً');
+        return;
+    }
+
+    // إخفاء جميع النماذج
+    document.querySelectorAll('.preview-form').forEach(form => {
+        if (form) form.classList.add('hidden');
+    });
+    
+    // عرض نموذج فروقات الترقية
+    const differenceForm = document.getElementById('difference-form');
+    if (!differenceForm) {
+        console.error("لم يتم العثور على نموذج فروقات الترقية");
+        return;
+    }
+    
+    differenceForm.classList.remove('hidden');
+    
+    try {
+        // تحويل التواريخ
+        const startDate = new Date(window.calculatedData.startDate);
+        const endDate = new Date(window.calculatedData.endDate);
+        
+        // استخدام toLocaleDateString لعرض التاريخ بالتنسيق العربي
+        const startDateFormatted = startDate.toLocaleDateString('ar-SA', { 
+            year: 'numeric', 
+            month: 'numeric', 
+            day: 'numeric',
+            calendar: 'islamic' 
+        });
+        
+        const endDateFormatted = endDate.toLocaleDateString('ar-SA', { 
+            year: 'numeric', 
+            month: 'numeric', 
+            day: 'numeric',
+            calendar: 'islamic' 
+        });
+        
+        // تحويل الرقم العام والسجل المدني إلى أرقام عربية
+        const arabicGeneralNumber = window.toArabicNumbers(window.calculatedData.generalNumber);
+        const arabicIdNumber = window.toArabicNumbers(window.calculatedData.idNumber);
+        
+        // التحقق من خيار إظهار الصفوف ذات القيمة صفر
+        const showZeroRows = window.appSettings.display.showZeroRows;
+        
+        // بناء محتوى النموذج مع وضع التواريخ في منتصف الصفحة
+        let htmlContent = `
+            <div class="text-center font-bold text-xl mb-6" style="text-align: center !important; font-weight: bold !important;">فروقات ترقية</div>
+            
+            <table class="print-table">
+                <tr>
+                    <th>الاسم</th>
+                    <th>الرتبة</th>
+                    <th>الرقم العام</th>
+                    <th>تاريخ المباشرة</th>
+                    <th>الوحدة</th>
+                </tr>
+                <tr>
+                    <td>${window.calculatedData.name}</td>
+                    <td>${window.calculatedData.newRank}</td>
+                    <td>${arabicGeneralNumber}</td>
+                    <td>${window.calculatedData.commencementDate ? new Date(window.calculatedData.commencementDate).toLocaleDateString('ar-SA', { calendar: 'islamic' }) : '-'}</td>
+                    <td>${window.calculatedData.unit}</td>
+                </tr>
+            </table>
+            
+            <div class="text-center my-4 font-bold" style="text-align: center !important; font-weight: bold !important; width: 100%; display: block;">
+                من تاريخ: ${startDateFormatted} إلى تاريخ: ${endDateFormatted}
+            </div>
+            
+            <table class="print-table">
+                <tr>
+                    <th>م</th>
+                    <th>نوع الفرق</th>
+                    <th>المبلغ السابق</th>
+                    <th>المبلغ الحالي</th>
+                    <th>عدد أيام الفرق</th>
+                    <th>مبلغ الفرق</th>
+                </tr>
+                ${window.calculatedData.differences.map((diff, index) => `
+                    <tr class="${diff.diffAmount === 0 ? (showZeroRows ? '' : 'hidden print:table-row') : ''}">
+                        <td>${window.toArabicNumbers(index + 1)}</td>
+                        <td>${diff.type}</td>
+                        <td>${diff.oldAmount.toLocaleString('ar-SA')}</td>
+                        <td>${diff.newAmount.toLocaleString('ar-SA')}</td>
+                        <td>${window.toArabicNumbers(diff.days)}</td>
+                        <td>${diff.diffAmount.toLocaleString('ar-SA')}</td>
+                    </tr>
+                `).join('')}`;
+        
+        // إضافة صف المجموع فقط إذا كان خيار العرض مفعل
+        if (window.appSettings.display.showTotals) {
+            htmlContent += `
+                <tr>
+                    <td colspan="5" class="text-center font-bold">الإجمالي</td>
+                    <td class="font-bold">${window.calculatedData.totalPositiveDiff.toLocaleString('ar-SA')}</td>
+                </tr>`;
+        }
+        
+        htmlContent += `</table>
+            
+            <div class="text-center font-bold my-4" style="text-align: center !important; font-weight: bold !important; width: 100%; display: block;">الحسميات</div>
+            
+            <table class="print-table">
+                <tr>
+                    <th>م</th>
+                    <th>نوع الحسم</th>
+                    <th>المبلغ السابق</th>
+                    <th>المبلغ الحالي</th>
+                    <th>عدد أيام الحسم</th>
+                    <th>مبلغ الحسم</th>
+                </tr>
+                ${window.calculatedData.deductions.map((ded, index) => `
+                    <tr class="${ded.diffAmount === 0 ? (showZeroRows ? '' : 'hidden print:table-row') : ''}">
+                        <td>${window.toArabicNumbers(index + 1)}</td>
+                        <td>${ded.type}</td>
+                        <td>${ded.oldAmount.toLocaleString('ar-SA')}</td>
+                        <td>${ded.newAmount.toLocaleString('ar-SA')}</td>
+                        <td>${window.toArabicNumbers(ded.days)}</td>
+                        <td>${ded.diffAmount.toLocaleString('ar-SA')}</td>
+                    </tr>
+                `).join('')}`;
+        
+        // إضافة صف المجموع فقط إذا كان خيار العرض مفعل
+        if (window.appSettings.display.showTotals) {
+            htmlContent += `
+                <tr>
+                    <td colspan="5" class="text-center font-bold">الإجمالي</td>
+                    <td class="font-bold">${window.calculatedData.totalNegativeDiff.toLocaleString('ar-SA')}</td>
+                </tr>`;
+        }
+        
+        htmlContent += `</table>
+            
+            <div class="text-center mt-6" style="text-align: center !important; width: 100%; display: block;">
+                <div class="font-bold" style="font-weight: bold !important;">صافي المبلغ: ${window.calculatedData.netDiff.toLocaleString('ar-SA')} ريال</div>
+            </div>
+            
+            <!-- زر التحكم بالإعدادات - يظهر فقط في واجهة المستخدم وليس عند الطباعة -->
+            <div class="mt-6 mb-2 text-center no-print">
+                <button id="toggle-settings-btn" class="px-3 py-1 text-sm bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded" onclick="switchTab('settings');">
+                    تعديل الإعدادات
+                </button>
+            </div>
+        `;
+        
+        differenceForm.innerHTML = htmlContent;
+        
+        // تحديث النسخة المطبوعة
+        const printDifferenceForm = document.getElementById('print-difference-form');
+        if (printDifferenceForm) {
+            // إزالة الأزرار من نسخة الطباعة
+            const contentToPrint = htmlContent.replace(/<div class="mt-6 mb-2 text-center no-print">[\s\S]*?<\/div>/g, '');
+            printDifferenceForm.innerHTML = contentToPrint;
+        }
+    } catch (error) {
+        console.error("خطأ في عرض نموذج فروقات الترقية:", error);
+        differenceForm.innerHTML = `
+            <div class="p-4 bg-red-100 text-red-700 rounded-md">
+                <p class="font-bold">حدث خطأ أثناء عرض النموذج:</p>
+                <p>${error.message}</p>
+                <p>يرجى المحاولة مرة أخرى أو التحقق من البيانات المدخلة.</p>
+            </div>
+        `;
+    }
+};
+
+// عرض نموذج عدم أسبقية الصرف
+window.previewDeclarationForm = function() {
+    if (!window.calculatedData.name) {
+        alert('يرجى حساب الفروقات أولاً');
+        return;
+    }
+    
+    // إخفاء جميع النماذج
+    document.querySelectorAll('.preview-form').forEach(form => {
+        if (form) form.classList.add('hidden');
+    });
+    
+    // عرض نموذج عدم أسبقية الصرف
+    const declarationForm = document.getElementById('declaration-form');
+    if (!declarationForm) {
+        console.error("لم يتم العثور على نموذج عدم أسبقية الصرف");
+        return;
+    }
+    
+    declarationForm.classList.remove('hidden');
+    
+    try {
+        // تحويل تاريخ المباشرة
+        const commencementDate = window.calculatedData.commencementDate ? new Date(window.calculatedData.commencementDate) : null;
+        
+        // العنوان والمحتوى
+        let htmlContent = `
+            <div class="text-center font-bold text-xl mb-6">إقرار عدم أسبقية صرف</div>
+            
+            <div class="text-center mb-8">
+                <p class="mb-2">أقر أنا/ ${window.calculatedData.name}</p>
+                <p class="mb-2">رقم الهوية: ${window.calculatedData.idNumber ? window.toArabicNumbers(window.calculatedData.idNumber) : '_________________'}</p>
+                <p class="mb-2">الرقم العام: ${window.toArabicNumbers(window.calculatedData.generalNumber)}</p>
+                <p class="mb-2">الرتبة: ${window.calculatedData.newRank}</p>
+                <p class="mb-2">الوحدة: ${window.calculatedData.unit}</p>
+            </div>
+            
+            <div class="mb-8">
+                <p class="mb-4">بأنه لم يسبق لي صرف فروقات مالية خاصة بترقيتي من رتبة ${window.calculatedData.oldRank} إلى رتبة ${window.calculatedData.newRank} اعتباراً من تاريخ ${commencementDate ? commencementDate.toLocaleDateString('ar-SA', { calendar: 'islamic' }) : '_________________'}</p>
+                <p class="mb-4">وفي حال ثبت خلاف ذلك فإنني أتحمل كامل المسؤولية وإعادة المبالغ التي تم صرفها لي دون وجه حق.</p>
+            </div>
+            
+            <div class="mt-12">
+                <div class="flex justify-around">
+                    <div class="text-center">
+                        <p class="font-bold mb-2">المقر بما فيه</p>
+                        <p class="mb-1">الاسم: ${window.calculatedData.name}</p>
+                        <p class="mb-1">التوقيع: _______________</p>
+                        <p>التاريخ: _______________</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="font-bold mb-2">قائد الوحدة</p>
+                        <p class="mb-1">الاسم: _______________</p>
+                        <p class="mb-1">التوقيع: _______________</p>
+                        <p>التاريخ: _______________</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        declarationForm.innerHTML = htmlContent;
+        
+        // تحديث النسخة المطبوعة
+        const printDifferenceForm = document.getElementById('print-difference-form');
+        if (printDifferenceForm) {
+            printDifferenceForm.innerHTML = htmlContent;
+        }
+    } catch (error) {
+        console.error("خطأ في عرض نموذج عدم أسبقية الصرف:", error);
+        declarationForm.innerHTML = `
+            <div class="p-4 bg-red-100 text-red-700 rounded-md">
+                <p class="font-bold">حدث خطأ أثناء عرض النموذج:</p>
+                <p>${error.message}</p>
+                <p>يرجى المحاولة مرة أخرى أو التحقق من البيانات المدخلة.</p>
+            </div>
+        `;
+    }
+};
+
+// طباعة النموذج الحالي
+window.printCurrentForm = function() {
+    window.print();
+};
+
+// تصدير النموذج الحالي كملف Word
+window.downloadAsWordDoc = function() {
+    alert('سيتم تطوير خاصية التصدير إلى Word قريبًا');
+};
+
+// إضافة العسكري إلى القائمة
+window.addToList = function() {
+    if (!window.calculatedData.name) {
+        alert('يرجى حساب الفروقات أولاً');
+        return;
+    }
+    
+    // إضافة البيانات إلى القائمة
+    const person = {
+        id: Date.now().toString(),
+        name: window.calculatedData.name,
+        generalNumber: window.calculatedData.generalNumber,
+        unit: window.calculatedData.unit,
+        rank: window.calculatedData.newRank,
+        startDate: window.calculatedData.startDate,
+        endDate: window.calculatedData.endDate,
+        amount: window.calculatedData.netDiff
+    };
+    
+    window.peopleList.push(person);
+    
+    // حفظ القائمة في localStorage
+    window.savePeopleList();
+    
+    // تحديث عرض القائمة
+    window.updatePeopleTable();
+    
+    // عرض رسالة نجاح
+    alert(`تم إضافة ${window.calculatedData.name} إلى القائمة بنجاح`);
+    
+    // الانتقال إلى تبويب القائمة
+    window.switchTab('list');
+};
+
+// باقي الوظائف
+window.exportList = function() {
+    if (window.peopleList.length === 0) {
+        alert('لا توجد بيانات للتصدير');
+        return;
+    }
+    
+    try {
+        // إنشاء نص CSV
+        let csvContent = 'الاسم,الرقم العام,الوحدة,الرتبة,من تاريخ,إلى تاريخ,المبلغ\n';
+        
+        window.peopleList.forEach(person => {
+            csvContent += `"${person.name}","${person.generalNumber}","${person.unit}","${person.rank}","${new Date(person.startDate).toLocaleDateString()}","${new Date(person.endDate).toLocaleDateString()}","${person.amount.toLocaleString()}"\n`;
+        });
+        
+        // إنشاء رابط التنزيل
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'قائمة_فروقات_الترقية.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    } catch (error) {
+        console.error('خطأ في تصدير القائمة:', error);
+        alert('حدث خطأ أثناء تصدير القائمة');
+    }
+};
+
+window.clearList = function() {
+    if (window.peopleList.length === 0) {
+        alert('القائمة فارغة بالفعل');
+        return;
+    }
+    
+    if (confirm('هل أنت متأكد من حذف جميع الأسماء من القائمة؟')) {
+        window.peopleList = [];
+        window.savePeopleList();
+        window.updatePeopleTable();
+        alert('تم حذف جميع الأسماء من القائمة بنجاح');
+    }
+};
+
+window.resetForm = function() {
+    if (confirm('هل أنت متأكد من إعادة تعيين النموذج؟')) {
+        // إعادة تعيين حقول البيانات الأساسية
+        document.getElementById('name').value = '';
+        document.getElementById('general-number').value = '';
+        document.getElementById('id-number').value = '';
+        document.getElementById('unit').value = window.appSettings.defaults.unit;
+        document.getElementById('start-date').value = '';
+        document.getElementById('end-date').value = '';
+        document.getElementById('commencement-date').value = '';
+        
+        // إعادة تعيين الرتبة والدرجة
+        document.getElementById('old-rank').value = 'جندي';
+        document.getElementById('new-rank').value = 'جندي أول';
+        document.getElementById('old-degree').value = '1';
+        document.getElementById('new-degree').value = '1';
+        
+        // إعادة تعيين مفردات الراتب
+        document.getElementById('old-basic-salary').value = '';
+        document.getElementById('new-basic-salary').value = '';
+        document.getElementById('old-terrorism').value = '';
+        document.getElementById('new-terrorism').value = '';
+        document.getElementById('old-security').value = '';
+        document.getElementById('new-security').value = '';
+        document.getElementById('old-retirement').value = '';
+        document.getElementById('new-retirement').value = '';
+        
+        // حذف البدلات الإضافية
+        const allowanceRows = document.querySelectorAll('#allowances-table tbody tr[data-allowance-id]');
+        allowanceRows.forEach(row => row.remove());
+        
+        // إعادة تعيين قوائم البدلات
+        window.customAllowances = [];
+        window.deletedAllowances = [];
+        
+        // استعادة الصفوف المخفية
+        window.restoreHiddenRows();
+        
+        // تحديث سلم الرواتب
+        window.updateSalaryScale();
+    }
+};
