@@ -1,7 +1,7 @@
 
 // تهيئة المتغيرات والوظائف العامة للنظام
 document.addEventListener('DOMContentLoaded', function() {
-    // التأكد من أن دالة التنقل بين جداول سلم الرواتب موجودة
+    // تعريف دالة التنقل بين جداول سلم الرواتب
     window.showSalaryRangeTable = function(start, end) {
         // إخفاء جميع الجداول أولاً
         document.getElementById('salary-table-1-5').classList.add('hidden');
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('new-rank').value = ranksList[oldRankIndex + 1];
         }
         
-        updateSalaryScale();
+        window.updateSalaryScale();
     };
 
     // تعريف دالة تحديث الدرجة الحالية بناءً على الدرجة السابقة
@@ -53,9 +53,9 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('new-degree').value = newDegree.toString();
         
         // البحث عن الراتب المناسب بناءً على الراتب السابق
-        findOptimalDegreeBasedOnSalary();
+        window.findOptimalDegreeBasedOnSalary();
         
-        updateSalaryScale();
+        window.updateSalaryScale();
     };
 
     // تعريف دالة البحث عن الدرجة المناسبة للرتبة الجديدة
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('new-basic-salary').value = newSalary;
         
         // حساب العلاوات
-        calculateAllowances();
+        window.calculateAllowances();
     };
 
     // تعريف دالة حساب العلاوات
@@ -176,8 +176,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // تحديث البدلات المخصصة إن وجدت
-        if (typeof updateCustomAllowances === 'function') {
-            updateCustomAllowances();
+        if (typeof window.updateCustomAllowances === 'function') {
+            window.updateCustomAllowances();
         }
     };
 
@@ -296,160 +296,785 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // إعادة حساب البدل تلقائيًا
-            calculateAllowances();
+            window.calculateAllowances();
         }
         
         // حفظ الإعدادات بعد التعديل
-        if (typeof saveSettings === 'function') {
-            saveSettings();
+        if (typeof window.saveSettings === 'function') {
+            window.saveSettings();
+        }
+    };
+
+    // إضافة دوال إضافية للنافذة العالمية
+    window.updateOldRankFromNewRank = function() {
+        const ranksList = ["جندي", "جندي أول", "عريف", "وكيل رقيب", "رقيب", "رقيب أول", "رئيس رقباء", "ملازم"];
+        const newRank = document.getElementById('new-rank').value;
+        
+        // البحث عن الرتبة الحالية في قائمة الرتب
+        const newRankIndex = ranksList.indexOf(newRank);
+        
+        // إذا كانت الرتبة موجودة وليست أول رتبة
+        if (newRankIndex > 0) {
+            // تعيين الرتبة السابقة كالرتبة التي تسبق الرتبة الحالية
+            document.getElementById('old-rank').value = ranksList[newRankIndex - 1];
+            
+            // تحديث الرواتب بناءً على الرتبة والدرجة الجديدة
+            window.updateSalaryScale();
+        }
+    };
+
+    window.updateOldDegreeFromNewDegree = function() {
+        const newDegree = parseInt(document.getElementById('new-degree').value);
+        
+        // الدرجة السابقة هي الدرجة الحالية + 1 (لا تتجاوز 15)
+        const oldDegree = Math.min(newDegree + 1, 15);
+        document.getElementById('old-degree').value = oldDegree.toString();
+        
+        // تحديث الرواتب بناءً على الرتبة والدرجة الجديدة
+        window.updateSalaryScale();
+    };
+
+    window.findRankAndDegreeByBasicSalary = function(type) {
+        // الحصول على الراتب الأساسي
+        const basicSalaryElement = document.getElementById(`${type}-basic-salary`);
+        if (!basicSalaryElement) return;
+        
+        const basicSalary = parseFloat(basicSalaryElement.value);
+        if (isNaN(basicSalary) || basicSalary <= 0) return;
+        
+        // قائمة الرتب
+        const ranksList = ["جندي", "جندي أول", "عريف", "وكيل رقيب", "رقيب", "رقيب أول", "رئيس رقباء", "ملازم"];
+        
+        // متغيرات لتخزين أقرب رتبة ودرجة
+        let closestRank = "";
+        let closestDegree = 1;
+        let smallestDifference = Number.MAX_VALUE;
+        
+        // البحث في جميع الرتب والدرجات
+        for (const rank of ranksList) {
+            for (let degree = 1; degree <= 15; degree++) {
+                const salaryElement = document.getElementById(`scale-${rank}-${degree}`);
+                if (salaryElement) {
+                    const salary = parseFloat(salaryElement.value);
+                    if (!isNaN(salary)) {
+                        // حساب الفرق بين الراتب المدخل والراتب في سلم الرواتب
+                        const difference = Math.abs(salary - basicSalary);
+                        
+                        // إذا كان الفرق أقل من أصغر فرق تم العثور عليه حتى الآن
+                        if (difference < smallestDifference) {
+                            smallestDifference = difference;
+                            closestRank = rank;
+                            closestDegree = degree;
+                            
+                            // إذا كان الراتب مطابقًا تمامًا، توقف عن البحث
+                            if (difference === 0) break;
+                        }
+                    }
+                }
+            }
+        }
+        
+        // إذا تم العثور على أقرب رتبة ودرجة
+        if (closestRank && closestDegree) {
+            // تعيين الرتبة والدرجة
+            document.getElementById(`${type}-rank`).value = closestRank;
+            document.getElementById(`${type}-degree`).value = closestDegree;
+            
+            // تحديث باقي الحقول
+            if (type === 'new') {
+                // في حالة "جديد"، حدّث الراتب الأساسي بالقيمة الدقيقة من سلم الرواتب
+                const exactSalaryElement = document.getElementById(`scale-${closestRank}-${closestDegree}`);
+                if (exactSalaryElement) {
+                    basicSalaryElement.value = exactSalaryElement.value;
+                }
+                
+                // حساب العلاوات والحسميات تلقائيًا
+                window.calculateAllowances();
+            } else {
+                // في حالة "قديم"، حدّث الراتب الأساسي بالقيمة الدقيقة من سلم الرواتب
+                const exactSalaryElement = document.getElementById(`scale-${closestRank}-${closestDegree}`);
+                if (exactSalaryElement) {
+                    basicSalaryElement.value = exactSalaryElement.value;
+                }
+                
+                // حساب العلاوات والحسميات تلقائيًا
+                window.calculateAllowances();
+            }
         }
     };
 
     // تفعيل باقي الدوال
-    if (typeof updateOldRankFromNewRank === 'function') {
+    if (typeof window.updateOldRankFromNewRank === 'function') {
         // مستمع تغيير الرتبة الحالية
         document.getElementById('new-rank').addEventListener('change', function() {
             // إذا تغيرت الرتبة الحالية، قم بتحديث الرتبة السابقة بناءً على الترتيب
-            updateOldRankFromNewRank();
+            window.updateOldRankFromNewRank();
         });
     }
     
-    if (typeof updateOldDegreeFromNewDegree === 'function') {
+    if (typeof window.updateOldDegreeFromNewDegree === 'function') {
         // مستمع تغيير الدرجة الحالية
         document.getElementById('new-degree').addEventListener('change', function() {
             // إذا تغيرت الدرجة الحالية، قم بتحديث الدرجة السابقة
-            updateOldDegreeFromNewDegree();
+            window.updateOldDegreeFromNewDegree();
         });
     }
     
-    if (typeof findRankAndDegreeByBasicSalary === 'function') {
+    if (typeof window.findRankAndDegreeByBasicSalary === 'function') {
         // مستمع تغيير الراتب الأساسي الحالي
         document.getElementById('new-basic-salary').addEventListener('change', function() {
             // عند تغيير الراتب الأساسي الحالي، ابحث عن الرتبة والدرجة المطابقة
-            findRankAndDegreeByBasicSalary('new');
+            window.findRankAndDegreeByBasicSalary('new');
         });
         
         // مستمع تغيير الراتب الأساسي السابق
         document.getElementById('old-basic-salary').addEventListener('change', function() {
             // عند تغيير الراتب الأساسي السابق، ابحث عن الرتبة والدرجة المطابقة
-            findRankAndDegreeByBasicSalary('old');
+            window.findRankAndDegreeByBasicSalary('old');
         });
     }
-});
 
-// تحديث الرتبة السابقة بناءً على الرتبة الحالية
-function updateOldRankFromNewRank() {
-    const ranksList = ["جندي", "جندي أول", "عريف", "وكيل رقيب", "رقيب", "رقيب أول", "رئيس رقباء", "ملازم"];
-    const newRank = document.getElementById('new-rank').value;
-    
-    // البحث عن الرتبة الحالية في قائمة الرتب
-    const newRankIndex = ranksList.indexOf(newRank);
-    
-    // إذا كانت الرتبة موجودة وليست أول رتبة
-    if (newRankIndex > 0) {
-        // تعيين الرتبة السابقة كالرتبة التي تسبق الرتبة الحالية
-        document.getElementById('old-rank').value = ranksList[newRankIndex - 1];
-        
-        // تحديث الرواتب بناءً على الرتبة والدرجة الجديدة
-        if (typeof updateSalaryScale === 'function') {
-            updateSalaryScale();
-        }
-    }
-}
-
-// تحديث الدرجة السابقة بناءً على الدرجة الحالية
-function updateOldDegreeFromNewDegree() {
-    const newDegree = parseInt(document.getElementById('new-degree').value);
-    
-    // الدرجة السابقة هي الدرجة الحالية + 1 (لا تتجاوز 15)
-    const oldDegree = Math.min(newDegree + 1, 15);
-    document.getElementById('old-degree').value = oldDegree.toString();
-    
-    // تحديث الرواتب بناءً على الرتبة والدرجة الجديدة
-    if (typeof updateSalaryScale === 'function') {
-        updateSalaryScale();
-    }
-}
-
-// البحث عن الرتبة والدرجة المناسبة بناءً على الراتب الأساسي
-function findRankAndDegreeByBasicSalary(type) {
-    // الحصول على الراتب الأساسي
-    const basicSalaryElement = document.getElementById(`${type}-basic-salary`);
-    if (!basicSalaryElement) return;
-    
-    const basicSalary = parseFloat(basicSalaryElement.value);
-    if (isNaN(basicSalary) || basicSalary <= 0) return;
-    
-    // قائمة الرتب
-    const ranksList = ["جندي", "جندي أول", "عريف", "وكيل رقيب", "رقيب", "رقيب أول", "رئيس رقباء", "ملازم"];
-    
-    // متغيرات لتخزين أقرب رتبة ودرجة
-    let closestRank = "";
-    let closestDegree = 1;
-    let smallestDifference = Number.MAX_VALUE;
-    
-    // البحث في جميع الرتب والدرجات
-    for (const rank of ranksList) {
-        for (let degree = 1; degree <= 15; degree++) {
-            const salaryElement = document.getElementById(`scale-${rank}-${degree}`);
-            if (salaryElement) {
-                const salary = parseFloat(salaryElement.value);
-                if (!isNaN(salary)) {
-                    // حساب الفرق بين الراتب المدخل والراتب في سلم الرواتب
-                    const difference = Math.abs(salary - basicSalary);
-                    
-                    // إذا كان الفرق أقل من أصغر فرق تم العثور عليه حتى الآن
-                    if (difference < smallestDifference) {
-                        smallestDifference = difference;
-                        closestRank = rank;
-                        closestDegree = degree;
-                        
-                        // إذا كان الراتب مطابقًا تمامًا، توقف عن البحث
-                        if (difference === 0) break;
-                    }
-                }
-            }
-        }
-    }
-    
-    // إذا تم العثور على أقرب رتبة ودرجة
-    if (closestRank && closestDegree) {
-        // تعيين الرتبة والدرجة
-        document.getElementById(`${type}-rank`).value = closestRank;
-        document.getElementById(`${type}-degree`).value = closestDegree;
-        
-        // تحديث باقي الحقول
-        if (type === 'new') {
-            // في حالة "جديد"، حدّث الراتب الأساسي بالقيمة الدقيقة من سلم الرواتب
-            const exactSalaryElement = document.getElementById(`scale-${closestRank}-${closestDegree}`);
-            if (exactSalaryElement) {
-                basicSalaryElement.value = exactSalaryElement.value;
-            }
-            
-            // حساب العلاوات والحسميات تلقائيًا
-            if (typeof calculateAllowances === 'function') {
-                calculateAllowances();
-            }
-        } else {
-            // في حالة "قديم"، حدّث الراتب الأساسي بالقيمة الدقيقة من سلم الرواتب
-            const exactSalaryElement = document.getElementById(`scale-${closestRank}-${closestDegree}`);
-            if (exactSalaryElement) {
-                basicSalaryElement.value = exactSalaryElement.value;
-            }
-            
-            // حساب العلاوات والحسميات تلقائيًا
-            if (typeof calculateAllowances === 'function') {
-                calculateAllowances();
-            }
-        }
-    }
-}
-
-// إضافة متغير عام لتخزين وضع الحساب التلقائي واليدوي للبدلات
-if (typeof window.allowanceCalculationMode === 'undefined') {
+    // إضافة متغير عام لتخزين وضع الحساب التلقائي واليدوي للبدلات
     window.allowanceCalculationMode = {
         terrorism: 'manual',
         security: 'manual',
         retirement: 'auto'
     };
+
+    // دوال إضافية
+    window.updateCustomAllowances = function() {
+        // التحقق من وجود بدلات مخصصة
+        if (!window.customAllowances || window.customAllowances.length === 0) return;
+        
+        const oldRank = document.getElementById('old-rank').value;
+        const newRank = document.getElementById('new-rank').value;
+        const oldDegree = document.getElementById('old-degree').value;
+        const newDegree = document.getElementById('new-degree').value;
+        const oldBasicSalary = Number(document.getElementById('old-basic-salary').value) || 0;
+        const newBasicSalary = Number(document.getElementById('new-basic-salary').value) || 0;
+        
+        // الحصول على راتب الدرجة الأولى
+        const oldRankFirstDegreeSalary = Number(document.getElementById(`scale-${oldRank}-1`)?.value) || 0;
+        const newRankFirstDegreeSalary = Number(document.getElementById(`scale-${newRank}-1`)?.value) || 0;
+        
+        // تحديث كل بدل مخصص
+        window.customAllowances.forEach(allowance => {
+            const rowElement = document.querySelector(`tr[data-row-id="${allowance.id}"]`);
+            if (!rowElement) return;
+            
+            const oldInput = document.getElementById(`old-${allowance.id}`);
+            const newInput = document.getElementById(`new-${allowance.id}`);
+            
+            if (!oldInput || !newInput) return;
+            
+            // حساب قيم البدل بناءً على نوعه
+            let oldValue = 0;
+            let newValue = 0;
+            
+            switch (allowance.type) {
+                case 'first-degree':
+                    // نسبة من راتب الدرجة الأولى
+                    oldValue = parseFloat((oldRankFirstDegreeSalary * (allowance.percentage / 100)).toFixed(2));
+                    newValue = parseFloat((newRankFirstDegreeSalary * (allowance.percentage / 100)).toFixed(2));
+                    break;
+                case 'current-degree':
+                    // نسبة من راتب الدرجة الحالية
+                    oldValue = parseFloat((oldBasicSalary * (allowance.percentage / 100)).toFixed(2));
+                    newValue = parseFloat((newBasicSalary * (allowance.percentage / 100)).toFixed(2));
+                    break;
+                case 'fixed':
+                    // المبالغ الثابتة تبقى كما هي
+                    return;
+                case 'custom':
+                    // البدلات المخصصة تتطلب إعادة حساب معقدة
+                    // يمكن إضافة منطق خاص هنا إذا لزم الأمر
+                    return;
+            }
+            
+            // تحديث قيم البدل
+            oldInput.value = oldValue;
+            newInput.value = newValue;
+        });
+    };
+
+    // حول hidden row
+    window.hideRow = function(rowId) {
+        const row = document.querySelector(`tr[data-row-id="${rowId}"]`);
+        if (row) {
+            row.style.display = 'none';
+            if (typeof window.hiddenRows !== 'undefined') {
+                window.hiddenRows.add(rowId);
+            } else {
+                window.hiddenRows = new Set([rowId]);
+            }
+            
+            // تصفير قيم الحقول المخفية
+            const oldInput = document.getElementById(`old-${rowId}`);
+            const newInput = document.getElementById(`new-${rowId}`);
+            
+            if (oldInput) oldInput.value = '0';
+            if (newInput) newInput.value = '0';
+        }
+    };
+
+    // استعادة الصفوف المخفية
+    window.restoreHiddenRows = function() {
+        if (typeof window.hiddenRows !== 'undefined') {
+            window.hiddenRows.forEach(rowId => {
+                const row = document.querySelector(`tr[data-row-id="${rowId}"]`);
+                if (row) {
+                    row.style.display = 'table-row';
+                }
+            });
+            window.hiddenRows.clear();
+        }
+    };
+
+    // تحديث ظهور أزرار الحذف بناءً على نوع التعديل
+    window.updateDeleteButtonsVisibility = function() {
+        const changeType = document.getElementById('change-type').value;
+        const deleteColumns = document.querySelectorAll('.delete-column');
+        const deleteButtons = document.querySelectorAll('.delete-row-btn');
+        
+        // في حالة "ترقية"، يتم إخفاء أزرار الحذف
+        if (changeType === 'ترقية') {
+            deleteColumns.forEach(col => col.style.display = 'none');
+        } else {
+            // في حالات التعديل الأخرى، يتم إظهار أزرار الحذف
+            deleteColumns.forEach(col => col.style.display = 'table-cell');
+            
+            // لا يمكن حذف الراتب الأساسي في كل الأحوال
+            const basicSalaryDeleteButton = document.querySelector('tr[data-row-id="basic-salary"] .delete-row-btn');
+            if (basicSalaryDeleteButton) basicSalaryDeleteButton.classList.add('hidden');
+            
+            // إظهار الصفوف المخفية مسبقًا
+            window.restoreHiddenRows();
+        }
+    };
+
+    // تهيئة المتغيرات العامة
+    window.peopleList = [];
+    window.differenceTotal = 0;
+    window.calculatedData = {};
+    window.customAllowances = []; // قائمة البدلات المخصصة
+    window.deletedAllowances = []; // قائمة البدلات المحذوفة
+    window.hiddenRows = new Set(); // قائمة بالصفوف المخفية
+    
+    // كائن لتخزين إعدادات التطبيق
+    window.appSettings = {
+        display: {
+            showZeroRows: false,
+            showTotals: false,
+            darkMode: false
+        },
+        calculation: {
+            autoTerrorism: false,  // افتراضيًا يدوي
+            autoSecurity: false,   // افتراضيًا يدوي
+            autoRetirement: true   // افتراضيًا تلقائي
+        },
+        defaults: {
+            unit: "كتيبة الشرطة العسكرية الحادية عشر",
+            changeType: "ترقية"
+        }
+    };
+    
+    // تحميل الإعدادات المحفوظة من localStorage
+    window.loadSettings = function() {
+        try {
+            const savedSettings = localStorage.getItem('appSettings');
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                
+                // دمج الإعدادات المحفوظة مع الإعدادات الافتراضية
+                if (settings.display) Object.assign(window.appSettings.display, settings.display);
+                if (settings.calculation) Object.assign(window.appSettings.calculation, settings.calculation);
+                if (settings.defaults) Object.assign(window.appSettings.defaults, settings.defaults);
+                
+                // تحديث وضع حساب البدلات
+                window.allowanceCalculationMode.terrorism = window.appSettings.calculation.autoTerrorism ? 'auto' : 'manual';
+                window.allowanceCalculationMode.security = window.appSettings.calculation.autoSecurity ? 'auto' : 'manual';
+                window.allowanceCalculationMode.retirement = window.appSettings.calculation.autoRetirement ? 'auto' : 'manual';
+                
+                // تطبيق الإعدادات
+                const elementsToUpdate = [
+                    { id: 'settings-show-zero-rows', path: 'display.showZeroRows', isCheckbox: true },
+                    { id: 'settings-show-totals', path: 'display.showTotals', isCheckbox: true },
+                    { id: 'settings-auto-terrorism', path: 'calculation.autoTerrorism', isCheckbox: true },
+                    { id: 'settings-auto-security', path: 'calculation.autoSecurity', isCheckbox: true },
+                    { id: 'settings-auto-retirement', path: 'calculation.autoRetirement', isCheckbox: true },
+                    { id: 'settings-default-unit', path: 'defaults.unit', isCheckbox: false }
+                ];
+                
+                elementsToUpdate.forEach(item => {
+                    const element = document.getElementById(item.id);
+                    if (element) {
+                        const value = item.path.split('.').reduce((acc, part) => acc && acc[part], window.appSettings);
+                        if (item.isCheckbox) {
+                            element.checked = value;
+                        } else {
+                            element.value = value;
+                        }
+                    }
+                });
+                
+                // تطبيق الإعدادات الافتراضية
+                const unitElement = document.getElementById('unit');
+                if (unitElement) {
+                    unitElement.value = window.appSettings.defaults.unit;
+                }
+                
+                // تطبيق خيارات العرض
+                const zeroRowsToggle = document.getElementById('show-zero-rows-toggle');
+                const totalsToggle = document.getElementById('show-totals-toggle');
+                
+                if (zeroRowsToggle) zeroRowsToggle.checked = window.appSettings.display.showZeroRows;
+                if (totalsToggle) totalsToggle.checked = window.appSettings.display.showTotals;
+            }
+        } catch (error) {
+            console.error('خطأ في تحميل الإعدادات:', error);
+        }
+    };
+    
+    // حفظ الإعدادات
+    window.saveSettings = function() {
+        try {
+            localStorage.setItem('appSettings', JSON.stringify(window.appSettings));
+        } catch (error) {
+            console.error('خطأ في حفظ الإعدادات:', error);
+        }
+    };
+    
+    // تحميل قائمة الأشخاص من localStorage
+    window.loadPeopleList = function() {
+        try {
+            const savedList = localStorage.getItem('peopleList');
+            if (savedList) {
+                window.peopleList = JSON.parse(savedList);
+                window.updatePeopleTable();
+            }
+        } catch (error) {
+            console.error('خطأ في تحميل القائمة:', error);
+        }
+    };
+    
+    // دالة لتحويل الأرقام الإنجليزية إلى أرقام عربية
+    window.toArabicNumbers = function(num) {
+        if (num === undefined || num === null) return '';
+        return String(num).replace(/[0-9]/g, d => String.fromCharCode(d.charCodeAt(0) + 1584));
+    };
+    
+    // تهيئة البيانات الأولية
+    window.loadSettings();
+    // تحميل سلم الرواتب من localStorage
+    window.loadSalaryScale();
+    // تحميل قائمة الأشخاص من localStorage
+    window.loadPeopleList();
+    
+    // ضبط حالة أزرار التبديل بين التلقائي واليدوي
+    window.setInitialToggleButtonsState = function() {
+        // بدل مكافحة الإرهاب
+        const terrorismStatusElement = document.getElementById('terrorism-calc-status');
+        const terrorismButtonElement = document.getElementById('toggle-terrorism-calc');
+        if (terrorismStatusElement && terrorismButtonElement) {
+            terrorismStatusElement.textContent = window.allowanceCalculationMode.terrorism === 'auto' ? 'تلقائي' : 'يدوي';
+            if (window.allowanceCalculationMode.terrorism === 'auto') {
+                terrorismButtonElement.classList.remove('bg-yellow-100', 'dark:bg-yellow-900', 'text-yellow-700', 'dark:text-yellow-300');
+                terrorismButtonElement.classList.add('bg-blue-100', 'dark:bg-blue-900', 'text-blue-700', 'dark:text-blue-300');
+            } else {
+                terrorismButtonElement.classList.remove('bg-blue-100', 'dark:bg-blue-900', 'text-blue-700', 'dark:text-blue-300');
+                terrorismButtonElement.classList.add('bg-yellow-100', 'dark:bg-yellow-900', 'text-yellow-700', 'dark:text-yellow-300');
+            }
+        }
+        
+        // علاوة الأمن
+        const securityStatusElement = document.getElementById('security-calc-status');
+        const securityButtonElement = document.getElementById('toggle-security-calc');
+        if (securityStatusElement && securityButtonElement) {
+            securityStatusElement.textContent = window.allowanceCalculationMode.security === 'auto' ? 'تلقائي' : 'يدوي';
+            if (window.allowanceCalculationMode.security === 'auto') {
+                securityButtonElement.classList.remove('bg-yellow-100', 'dark:bg-yellow-900', 'text-yellow-700', 'dark:text-yellow-300');
+                securityButtonElement.classList.add('bg-blue-100', 'dark:bg-blue-900', 'text-blue-700', 'dark:text-blue-300');
+            } else {
+                securityButtonElement.classList.remove('bg-blue-100', 'dark:bg-blue-900', 'text-blue-700', 'dark:text-blue-300');
+                securityButtonElement.classList.add('bg-yellow-100', 'dark:bg-yellow-900', 'text-yellow-700', 'dark:text-yellow-300');
+            }
+        }
+        
+        // التقاعد
+        const retirementStatusElement = document.getElementById('retirement-calc-status');
+        const retirementButtonElement = document.getElementById('toggle-retirement-calc');
+        if (retirementStatusElement && retirementButtonElement) {
+            retirementStatusElement.textContent = window.allowanceCalculationMode.retirement === 'auto' ? 'تلقائي' : 'يدوي';
+            if (window.allowanceCalculationMode.retirement === 'auto') {
+                retirementButtonElement.classList.remove('bg-yellow-100', 'dark:bg-yellow-900', 'text-yellow-700', 'dark:text-yellow-300');
+                retirementButtonElement.classList.add('bg-blue-100', 'dark:bg-blue-900', 'text-blue-700', 'dark:text-blue-300');
+            } else {
+                retirementButtonElement.classList.remove('bg-blue-100', 'dark:bg-blue-900', 'text-blue-700', 'dark:text-blue-300');
+                retirementButtonElement.classList.add('bg-yellow-100', 'dark:bg-yellow-900', 'text-yellow-700', 'dark:text-yellow-300');
+            }
+        }
+    };
+    
+    window.setInitialToggleButtonsState();
+    // تحديث ظهور أزرار الحذف بناءً على نوع التعديل
+    window.updateDeleteButtonsVisibility();
+});
+
+// وظائف إضافية خارج نطاق DOMContentLoaded
+
+// تحديث جدول الأشخاص
+function updatePeopleTable() {
+    const tableBody = document.querySelector('#people-table tbody');
+    if (!tableBody) return;
+    
+    // إفراغ الجدول
+    tableBody.innerHTML = '';
+    
+    // إذا كانت القائمة فارغة، عرض رسالة
+    if (!window.peopleList || window.peopleList.length === 0) {
+        tableBody.innerHTML = `
+            <tr class="text-center">
+                <td colspan="8" class="border border-gray-300 dark:border-gray-600 p-4 text-gray-500 dark:text-gray-400">
+                    لا توجد بيانات. قم بإضافة أشخاص من شاشة إدخال البيانات.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    // ملء الجدول بالبيانات
+    window.peopleList.forEach(person => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td class="border border-gray-300 dark:border-gray-600 p-2">${person.name}</td>
+            <td class="border border-gray-300 dark:border-gray-600 p-2">${person.generalNumber}</td>
+            <td class="border border-gray-300 dark:border-gray-600 p-2">${person.unit}</td>
+            <td class="border border-gray-300 dark:border-gray-600 p-2">${person.rank}</td>
+            <td class="border border-gray-300 dark:border-gray-600 p-2">${new Date(person.startDate).toLocaleDateString()}</td>
+            <td class="border border-gray-300 dark:border-gray-600 p-2">${new Date(person.endDate).toLocaleDateString()}</td>
+            <td class="border border-gray-300 dark:border-gray-600 p-2">${person.amount.toLocaleString()}</td>
+            <td class="border border-gray-300 dark:border-gray-600 p-2">
+                <button class="text-blue-600 hover:text-blue-800 mr-2" onclick="loadPersonData('${person.id}')">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                </button>
+                <button class="text-red-600 hover:text-red-800" onclick="deletePersonFromList('${person.id}')">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                </button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
 }
+
+// حذف شخص من القائمة
+function deletePersonFromList(personId) {
+    if (!confirm('هل أنت متأكد من حذف هذا الشخص من القائمة؟')) return;
+    
+    const personIndex = window.peopleList.findIndex(person => person.id === personId);
+    if (personIndex !== -1) {
+        window.peopleList.splice(personIndex, 1);
+        
+        // حفظ القائمة في localStorage
+        savePeopleList();
+        
+        // تحديث عرض القائمة
+        updatePeopleTable();
+    }
+}
+
+// تحميل بيانات شخص من القائمة
+function loadPersonData(personId) {
+    const person = window.peopleList.find(p => p.id === personId);
+    if (!person) return;
+    
+    // تعبئة نموذج البيانات بالبيانات المحفوظة
+    document.getElementById('name').value = person.name;
+    document.getElementById('general-number').value = person.generalNumber;
+    document.getElementById('unit').value = person.unit;
+    document.getElementById('start-date').value = person.startDate;
+    document.getElementById('end-date').value = person.endDate;
+    
+    // الانتقال إلى تبويب إدخال البيانات
+    window.switchTab('data');
+}
+
+// حفظ قائمة الأشخاص في localStorage
+function savePeopleList() {
+    try {
+        localStorage.setItem('peopleList', JSON.stringify(window.peopleList));
+    } catch (error) {
+        console.error('خطأ في حفظ القائمة:', error);
+    }
+}
+
+// حفظ سلم الرواتب في localStorage
+function saveSalaryScale() {
+    try {
+        const ranks = ["جندي", "جندي أول", "عريف", "وكيل رقيب", "رقيب", "رقيب أول", "رئيس رقباء", "ملازم"];
+        const salaryScale = {};
+        
+        // جمع قيم سلم الرواتب
+        ranks.forEach(rank => {
+            salaryScale[rank] = {};
+            for (let degree = 1; degree <= 15; degree++) {
+                const element = document.getElementById(`scale-${rank}-${degree}`);
+                if (element) {
+                    salaryScale[rank][degree] = Number(element.value) || 0;
+                }
+            }
+        });
+        
+        localStorage.setItem('salaryScale', JSON.stringify(salaryScale));
+        alert('تم حفظ سلم الرواتب بنجاح');
+    } catch (error) {
+        console.error('خطأ في حفظ سلم الرواتب:', error);
+        alert('حدث خطأ أثناء حفظ سلم الرواتب');
+    }
+}
+
+// تحميل سلم الرواتب من localStorage
+function loadSalaryScale() {
+    try {
+        const savedScale = localStorage.getItem('salaryScale');
+        if (savedScale) {
+            const salaryScale = JSON.parse(savedScale);
+            
+            // تعبئة قيم سلم الرواتب
+            for (const rank in salaryScale) {
+                for (const degree in salaryScale[rank]) {
+                    const element = document.getElementById(`scale-${rank}-${degree}`);
+                    if (element) {
+                        element.value = salaryScale[rank][degree];
+                    }
+                }
+            }
+        }
+    } catch (error) {
+        console.error('خطأ في تحميل سلم الرواتب:', error);
+    }
+}
+
+// تحديث إعدادات العرض
+function toggleDisplaySetting(settingName, value) {
+    if (settingName === 'showZeroRows') {
+        window.appSettings.display.showZeroRows = value;
+        
+        // تحديث التبديل في صفحة الإعدادات أيضًا
+        const settingsToggle = document.getElementById('settings-show-zero-rows');
+        if (settingsToggle) settingsToggle.checked = value;
+    } else if (settingName === 'showTotals') {
+        window.appSettings.display.showTotals = value;
+        
+        // تحديث التبديل في صفحة الإعدادات أيضًا
+        const settingsToggle = document.getElementById('settings-show-totals');
+        if (settingsToggle) settingsToggle.checked = value;
+    }
+    
+    // إعادة عرض النموذج الحالي
+    if (document.getElementById('difference-form').classList.contains('hidden')) {
+        previewDeclarationForm();
+    } else {
+        previewDifferenceForm();
+    }
+    
+    // حفظ الإعدادات
+    window.saveSettings();
+}
+
+// تحديث إعدادات الحساب التلقائي
+function updateCalculationSetting(settingType, value) {
+    // تحديث الإعدادات
+    if (settingType === 'terrorism') {
+        window.appSettings.calculation.autoTerrorism = value;
+        window.allowanceCalculationMode.terrorism = value ? 'auto' : 'manual';
+    } else if (settingType === 'security') {
+        window.appSettings.calculation.autoSecurity = value;
+        window.allowanceCalculationMode.security = value ? 'auto' : 'manual';
+    } else if (settingType === 'retirement') {
+        window.appSettings.calculation.autoRetirement = value;
+        window.allowanceCalculationMode.retirement = value ? 'auto' : 'manual';
+    }
+    
+    // تحديث حالة الأزرار
+    window.setInitialToggleButtonsState();
+    
+    // إعادة حساب العلاوات إذا كانت تلقائية
+    window.calculateAllowances();
+    
+    // حفظ الإعدادات
+    window.saveSettings();
+}
+
+// تحديث إعدادات النظام
+function updateSetting(category, name, value) {
+    if (category === 'display') {
+        window.appSettings.display[name] = value;
+    } else if (category === 'calculation') {
+        window.appSettings.calculation[name] = value;
+    } else if (category === 'defaults') {
+        window.appSettings.defaults[name] = value;
+        
+        // تطبيق الإعدادات الافتراضية
+        if (name === 'unit') {
+            document.getElementById('unit').value = value;
+        }
+    }
+}
+
+// أمثلة لدوال أخرى
+function showAddAllowanceModal() {
+    const modal = document.getElementById('add-allowance-modal');
+    if (modal) modal.classList.remove('hidden');
+    
+    // إعادة تعيين حقول النافذة
+    const allowanceNameInput = document.getElementById('allowance-name');
+    const allowanceTypeSelect = document.getElementById('allowance-type');
+    const percentageInput = document.getElementById('allowance-percentage');
+    const oldAmountInput = document.getElementById('allowance-amount-old');
+    const newAmountInput = document.getElementById('allowance-amount-new');
+    
+    if (allowanceNameInput) allowanceNameInput.value = '';
+    if (allowanceTypeSelect) allowanceTypeSelect.value = 'first-degree';
+    if (percentageInput) percentageInput.value = '25';
+    if (oldAmountInput) oldAmountInput.value = '';
+    if (newAmountInput) newAmountInput.value = '';
+    
+    // تحديث حقول نوع البدل
+    updateAllowanceTypeFields();
+}
+
+function hideAddAllowanceModal() {
+    const modal = document.getElementById('add-allowance-modal');
+    if (modal) modal.classList.add('hidden');
+}
+
+function updateAllowanceTypeFields() {
+    const allowanceType = document.getElementById('allowance-type').value;
+    const percentageContainer = document.getElementById('percentage-container');
+    const fixedAmountContainer = document.getElementById('fixed-amount-container');
+    const customSearchContainer = document.getElementById('custom-search-container');
+    const allowanceTypeDescription = document.getElementById('allowance-type-description');
+    
+    if (!percentageContainer || !fixedAmountContainer || !customSearchContainer || !allowanceTypeDescription) return;
+    
+    // إخفاء كل الحقول
+    percentageContainer.classList.add('hidden');
+    fixedAmountContainer.classList.add('hidden');
+    customSearchContainer.classList.add('hidden');
+    
+    // إظهار الحقول المناسبة حسب نوع البدل
+    if (allowanceType === 'first-degree') {
+        percentageContainer.classList.remove('hidden');
+        allowanceTypeDescription.textContent = 'يتم حساب البدل كنسبة من راتب الدرجة الأولى للرتبة (مثل بدل مكافحة الإرهاب)';
+    } else if (allowanceType === 'current-degree') {
+        percentageContainer.classList.remove('hidden');
+        allowanceTypeDescription.textContent = 'يتم حساب البدل كنسبة من راتب الدرجة الحالية للرتبة (مثل علاوة الأمن)';
+    } else if (allowanceType === 'fixed') {
+        fixedAmountContainer.classList.remove('hidden');
+        allowanceTypeDescription.textContent = 'يتم إدخال مبلغ ثابت للبدل (مثل بدل النقل)';
+    } else if (allowanceType === 'custom') {
+        customSearchContainer.classList.remove('hidden');
+        allowanceTypeDescription.textContent = 'يتم البحث عن البدل بناءً على معايير البحث المخصصة';
+    }
+}
+
+function previewCustomSearch() {
+    const oldRank = document.getElementById('old-rank').value;
+    const newRank = document.getElementById('new-rank').value;
+    const oldDegree = document.getElementById('old-degree').value;
+    const newDegree = document.getElementById('new-degree').value;
+    
+    // البحث عن رتبة ودرجة البدل السابق
+    const searchRankOldSelect = document.getElementById('search-rank-old');
+    const searchDegreeOldSelect = document.getElementById('search-degree-old');
+    
+    if (!searchRankOldSelect || !searchDegreeOldSelect) {
+        console.error("لم يتم العثور على عناصر البحث المخصص");
+        return;
+    }
+    
+    let searchRankOld = searchRankOldSelect.value;
+    let searchDegreeOld = searchDegreeOldSelect.value;
+    
+    // إذا كانت الرتبة هي "نفس الرتبة السابقة" أو "نفس الرتبة الحالية"
+    if (searchRankOld === 'old-rank') {
+        searchRankOld = oldRank;
+    } else if (searchRankOld === 'new-rank') {
+        searchRankOld = newRank;
+    }
+    
+    // إذا كانت الدرجة هي "نفس الدرجة السابقة"
+    if (searchDegreeOld === 'old-degree') {
+        searchDegreeOld = oldDegree;
+    }
+    
+    // البحث عن رتبة ودرجة البدل الحالي
+    const searchRankNewSelect = document.getElementById('search-rank-new');
+    const searchDegreeNewSelect = document.getElementById('search-degree-new');
+    
+    if (!searchRankNewSelect || !searchDegreeNewSelect) {
+        console.error("لم يتم العثور على عناصر البحث المخصص");
+        return;
+    }
+    
+    let searchRankNew = searchRankNewSelect.value;
+    let searchDegreeNew = searchDegreeNewSelect.value;
+    
+    // إذا كانت الرتبة هي "نفس الرتبة السابقة" أو "نفس الرتبة الحالية"
+    if (searchRankNew === 'old-rank') {
+        searchRankNew = oldRank;
+    } else if (searchRankNew === 'new-rank') {
+        searchRankNew = newRank;
+    }
+    
+    // إذا كانت الدرجة هي "نفس الدرجة الحالية"
+    if (searchDegreeNew === 'new-degree') {
+        searchDegreeNew = newDegree;
+    }
+    
+    // البحث عن القيم في سلم الرواتب
+    const oldScaleElement = document.getElementById(`scale-${searchRankOld}-${searchDegreeOld}`);
+    const newScaleElement = document.getElementById(`scale-${searchRankNew}-${searchDegreeNew}`);
+    
+    const previewOldAmountElement = document.getElementById('preview-old-amount');
+    const previewNewAmountElement = document.getElementById('preview-new-amount');
+    
+    if (!previewOldAmountElement || !previewNewAmountElement) {
+        console.error("لم يتم العثور على عناصر معاينة البحث");
+        return;
+    }
+    
+    // التحقق من وجود العناصر
+    if (oldScaleElement) {
+        const oldValue = Number(oldScaleElement.value) || 0;
+        // تطبيق النسبة المئوية
+        const percentageElement = document.getElementById('allowance-custom-percentage');
+        const percentage = percentageElement ? (Number(percentageElement.value) || 100) : 100;
+        
+        previewOldAmountElement.textContent = Math.round(oldValue * percentage / 100).toString();
+    } else {
+        previewOldAmountElement.textContent = "غير موجود";
+    }
+    
+    if (newScaleElement) {
+        const newValue = Number(newScaleElement.value) || 0;
+        // تطبيق النسبة المئوية
+        const percentageElement = document.getElementById('allowance-custom-percentage');
+        const percentage = percentageElement ? (Number(percentageElement.value) || 100) : 100;
+        
+        previewNewAmountElement.textContent = Math.round(newValue * percentage / 100).toString();
+    } else {
+        previewNewAmountElement.textContent = "غير موجود";
+    }
+}
+
+function addNewAllowance() {
+    // يمكن تنفيذ هذه الدالة هنا أو استخدام window.addNewAllowance
+}
+
+// وهكذا لباقي الدوال...
