@@ -1,0 +1,28 @@
+updateSalaryScale is not defined
+at HTMLSelectElement.onchange (https://4f843c35-50ac-4d7c-a792-1de55ed7193a-00-ogid2cl0pa2o.picard.replit.dev/:458:192)
+updateSalaryScale is not defined
+at HTMLSelectElement.onchange (https://4f843c35-50ac-4d7c-a792-1de55ed7193a-00-ogid2cl0pa2o.picard.replit.dev/:458:192)
+updateSalaryScale is not defined
+at HTMLSelectElement.onchange (https://4f843c35-50ac-4d7c-a792-1de55ed7193a-00-ogid2cl0pa2o.picard.replit.dev/:458:192)
+updateSalaryScale is not defined
+updateSalaryScale is not defined
+at HTMLSelectElement.onchange (https://4f843c35-50ac-4d7c-a792-1de55ed7193a-00-ogid2cl0pa2o.picard.replit.dev/:458:192)
+updateSalaryScale is not defined
+at HTMLSelectElement.onchange (https://4f843c35-50ac-4d7c-a792-1de55ed7193a-00-ogid2cl0pa2o.picard.replit.dev/:458:192)
+updateSalaryScale is not defined
+at HTMLSelectElement.onchange (https://4f843c35-50ac-4d7c-a792-1de55ed7193a-00-ogid2cl0pa2o.picard.replit.dev/:458:192)
+updateSalaryScale is not defined
+at HTMLSelectElement.onchange (https://4f843c35-50ac-4d7c-a792-1de55ed7193a-00-ogid2cl0pa2o.picard.replit.dev/:458:192)
+updateSalaryScale is not defined
+at HTMLSelectElement.onchange (https://4f843c35-50ac-4d7c-a792-1de55ed7193a-00-ogid2cl0pa2o.picard.replit.dev/:458:192)
+updateSalaryScale is not defined
+switchTab is not defined
+at HTMLButtonElement.onclick (https://4f843c35-50ac-4d7c-a792-1de55ed7193a-00-ogid2cl0pa2o.picard.replit.dev/:342:227)
+switchTab is not defined
+at HTMLButtonElement.onclick (https://4f843c35-50ac-4d7c-a792-1de55ed7193a-00-ogid2cl0pa2o.picard.replit.dev/:347:229)
+switchTab is not defined
+at HTMLButtonElement.onclick (https://4f843c35-50ac-4d7c-a792-1de55ed7193a-00-ogid2cl0pa2o.picard.replit.dev/:337:219)
+switchTab is not defined
+at HTMLButtonElement.onclick (https://4f843c35-50ac-4d7c-a792-1de55ed7193a-00-ogid2cl0pa2o.picard.replit.dev/:332:221)
+switchTab is not defined
+at HTMLButtonElement.onclick (https://4f843c35-50ac-4d7c-a792-1de55ed7193a-00-ogid2cl0pa2o.picard.replit.dev/:327:181)
