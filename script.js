@@ -1,6 +1,10 @@
-// تهيئة المتغيرات والوظائف العامة للنظام
-// Switch tab functionality 
-window.switchTab = function(tabId) {
+// تعريف الدوال الأساسية أولاً
+function toArabicNumbers(num) {
+    if (num === undefined || num === null) return '';
+    return String(num).replace(/[0-9]/g, d => String.fromCharCode(d.charCodeAt(0) + 1584));
+}
+
+function switchTab(tabId) {
     const tabContents = document.getElementsByClassName('tab-content');
     for (let i = 0; i < tabContents.length; i++) {
         tabContents[i].classList.add('hidden');
@@ -17,10 +21,9 @@ window.switchTab = function(tabId) {
     document.getElementById(`${tabId}-tab`).classList.add('border-primary');
     document.getElementById(`${tabId}-tab`).classList.remove('border-transparent');
     document.getElementById(`${tabId}-tab`).ariaSelected = "true";
-};
+}
 
-// Rank and degree calculations
-window.updateRankAndDegree = function() {
+function updateRankAndDegree() {
     const ranksList = ["جندي", "جندي أول", "عريف", "وكيل رقيب", "رقيب", "رقيب أول", "رئيس رقباء", "ملازم"];
     const oldRank = document.getElementById('old-rank').value;
 
@@ -30,9 +33,9 @@ window.updateRankAndDegree = function() {
     }
 
     updateSalaryScale();
-};
+}
 
-window.updateSalaryScale = function() {
+function updateSalaryScale() {
     const oldRank = document.getElementById('old-rank').value;
     const newRank = document.getElementById('new-rank').value;
     const oldDegree = document.getElementById('old-degree').value;
@@ -47,24 +50,17 @@ window.updateSalaryScale = function() {
     document.getElementById('new-basic-salary').value = newSalaryElement.value;
 
     calculateAllowances();
-};
+}
 
-window.updateBasedOnOldDegree = function() {
+function updateBasedOnOldDegree() {
     const oldDegree = parseInt(document.getElementById('old-degree').value);
     const newDegree = Math.max(1, oldDegree - 1);
     document.getElementById('new-degree').value = newDegree.toString();
 
     updateSalaryScale();
-};
-
-// Modal functionality
-function showAddAllowanceModal() {
-  const modal = document.getElementById('add-allowance-modal');
-  if (modal) modal.classList.remove('hidden');
 }
 
-// Allowance calculations
-window.toggleAllowanceCalculation = function(allowanceType) {
+function toggleAllowanceCalculation(allowanceType) {
     const statusElement = document.getElementById(`${allowanceType}-calc-status`);
     const buttonElement = document.getElementById(`toggle-${allowanceType}-calc`);
 
@@ -82,49 +78,33 @@ window.toggleAllowanceCalculation = function(allowanceType) {
     }
 
     calculateAllowances();
-};
-
-function calculateAllowances() {
-  // Basic salary calculations
-  const oldBasicSalary = Number(document.getElementById('old-basic-salary').value) || 0;
-  const newBasicSalary = Number(document.getElementById('new-basic-salary').value) || 0;
-
-  // Calculate terrorism allowance
-  if (window.allowanceCalculationMode.terrorism === 'auto') {
-    const oldTerrorism = oldBasicSalary * 0.25;
-    const newTerrorism = newBasicSalary * 0.25;
-    document.getElementById('old-terrorism').value = oldTerrorism.toFixed(2);
-    document.getElementById('new-terrorism').value = newTerrorism.toFixed(2);
-  }
-
-  // Calculate security allowance
-  if (window.allowanceCalculationMode.security === 'auto') {
-    const oldSecurity = oldBasicSalary * 0.25;
-    const newSecurity = newBasicSalary * 0.25;
-    document.getElementById('old-security').value = oldSecurity.toFixed(2);
-    document.getElementById('new-security').value = newSecurity.toFixed(2);
-  }
-
-  // Calculate retirement
-  if (window.allowanceCalculationMode.retirement === 'auto') {
-    const oldRetirement = oldBasicSalary * 0.09;
-    const newRetirement = newBasicSalary * 0.09;
-    document.getElementById('old-retirement').value = oldRetirement.toFixed(2);
-    document.getElementById('new-retirement').value = newRetirement.toFixed(2);
-  }
 }
 
-window.recalculateAllowances = function(type) {
-    const basicSalary = Number(document.getElementById(`${type}-basic-salary`).value) || 0;
+function calculateAllowances() {
+    const oldBasicSalary = Number(document.getElementById('old-basic-salary').value) || 0;
+    const newBasicSalary = Number(document.getElementById('new-basic-salary').value) || 0;
 
-    if (window.allowanceCalculationMode.retirement === 'auto') {
-        document.getElementById(`${type}-retirement`).value = (basicSalary * 0.09).toFixed(2);
+    // حساب بدل مكافحة الإرهاب (25%)
+    const terrorismElement = document.getElementById('terrorism-calc-status');
+    if (terrorismElement && terrorismElement.textContent === 'تلقائي') {
+        document.getElementById('old-terrorism').value = (oldBasicSalary * 0.25).toFixed(2);
+        document.getElementById('new-terrorism').value = (newBasicSalary * 0.25).toFixed(2);
     }
 
-    if (window.allowanceCalculationMode.security === 'auto') {
-        document.getElementById(`${type}-security`).value = (basicSalary * 0.25).toFixed(2);
+    // حساب علاوة الأمن (25%)
+    const securityElement = document.getElementById('security-calc-status');
+    if (securityElement && securityElement.textContent === 'تلقائي') {
+        document.getElementById('old-security').value = (oldBasicSalary * 0.25).toFixed(2);
+        document.getElementById('new-security').value = (newBasicSalary * 0.25).toFixed(2);
     }
-};
+
+    // حساب التقاعد (9%)
+    const retirementElement = document.getElementById('retirement-calc-status');
+    if (retirementElement && retirementElement.textContent === 'تلقائي') {
+        document.getElementById('old-retirement').value = (oldBasicSalary * 0.09).toFixed(2);
+        document.getElementById('new-retirement').value = (newBasicSalary * 0.09).toFixed(2);
+    }
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     // تعريف دالة التنقل بين جداول سلم الرواتب
@@ -139,11 +119,9 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     // تعريف دالة تحديث الرتبة والدرجة
-    window.updateRankAndDegree = updateRankAndDegree;
-
+    
     // تعريف دالة تحديث الدرجة الحالية بناءً على الدرجة السابقة
-    window.updateBasedOnOldDegree = updateBasedOnOldDegree;
-
+    
     // تعريف دالة البحث عن الدرجة المناسبة للرتبة الجديدة
     window.findOptimalDegreeBasedOnSalary = function() {
         const oldRank = document.getElementById('old-rank').value;
@@ -173,16 +151,23 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     // تعريف دالة تحديث سلم الرواتب
-    window.updateSalaryScale = updateSalaryScale;
     
     // تعريف دالة حساب العلاوات
-    window.calculateAllowances = calculateAllowances;
     
     // تبديل الحساب التلقائي واليدوي للبدلات
-    window.toggleAllowanceCalculation = toggleAllowanceCalculation;
     
     // تعريف دالة لإعادة حساب البدلات
-    window.recalculateAllowances = recalculateAllowances;
+    window.recalculateAllowances = function(type) {
+        const basicSalary = Number(document.getElementById(`${type}-basic-salary`).value) || 0;
+        
+        if (document.getElementById('retirement-calc-status').textContent === 'تلقائي') {
+            document.getElementById(`${type}-retirement`).value = (basicSalary * 0.09).toFixed(2);
+        }
+        
+        if (document.getElementById('security-calc-status').textContent === 'تلقائي') {
+            document.getElementById(`${type}-security`).value = (basicSalary * 0.25).toFixed(2);
+        }
+    };
     
     // إضافة دوال إضافية للنافذة العالمية
     window.updateOldRankFromNewRank = function() {
@@ -505,11 +490,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
     
-    // دالة لتحويل الأرقام الإنجليزية إلى أرقام عربية
-    window.toArabicNumbers = function(num) {
-        if (num === undefined || num === null) return '';
-        return String(num).replace(/[0-9]/g, d => String.fromCharCode(d.charCodeAt(0) + 1584));
-    };
     
     // تهيئة البيانات الأولية
     window.loadSettings();
@@ -587,26 +567,26 @@ document.addEventListener('DOMContentLoaded', function() {
     // تحديث ظهور أزرار الحذف بناءً على نوع التعديل
     window.updateDeleteButtonsVisibility();
     // Add event listeners for rank changes
-    document.getElementById('old-rank').addEventListener('change', updateRankAndDegree);
-    document.getElementById('new-rank').addEventListener('change', updateSalaryScale);
-
+    
     // Add event listeners for degree changes
-    document.getElementById('old-degree').addEventListener('change', updateBasedOnOldDegree);
-    document.getElementById('new-degree').addEventListener('change', updateSalaryScale);
-
+    
     // Default to first tab
     switchTab('data');
+    
+    // إضافة مستمعي الأحداث للرتبة
+    const oldRankSelect = document.getElementById('old-rank');
+    const newRankSelect = document.getElementById('new-rank');
+    if (oldRankSelect) oldRankSelect.addEventListener('change', updateRankAndDegree);
+    if (newRankSelect) newRankSelect.addEventListener('change', updateSalaryScale);
+
+    // إضافة مستمعي الأحداث للدرجة
+    const oldDegreeSelect = document.getElementById('old-degree');
+    const newDegreeSelect = document.getElementById('new-degree');
+    if (oldDegreeSelect) oldDegreeSelect.addEventListener('change', updateBasedOnOldDegree);
+    if (newDegreeSelect) newDegreeSelect.addEventListener('change', updateSalaryScale);
 });
 
 // Make functions globally available
-window.switchTab = switchTab;
-window.updateRankAndDegree = updateRankAndDegree;
-window.updateSalaryScale = updateSalaryScale;
-window.updateBasedOnOldDegree = updateBasedOnOldDegree;
-window.showAddAllowanceModal = showAddAllowanceModal;
-window.toggleAllowanceCalculation = toggleAllowanceCalculation;
-
-
 
 // وظائف إضافية خارج نطاق DOMContentLoaded
 // تحديث جدول الأشخاص
@@ -814,7 +794,10 @@ window.updateSetting = function(category, name, value) {
 };
 
 // أمثلة لدوال أخرى
-window.showAddAllowanceModal = showAddAllowanceModal;
+window.showAddAllowanceModal = function() {
+    const modal = document.getElementById('add-allowance-modal');
+    if (modal) modal.classList.remove('hidden');
+};
 
 window.hideAddAllowanceModal = function() {
     const modal = document.getElementById('add-allowance-modal');
@@ -1474,7 +1457,7 @@ window.previewDifferenceForm = function() {
             <table class="print-table">
                 <tr>
                     <th>م</th>
-                    <th>نوع الحسم</th>
+                    <th>نوعالحسم</th>
                     <th>المبلغ السابق</th>
                     <th>المبلغ الحالي</th>
                     <th>عدد أيام الحسم</th>
@@ -1747,19 +1730,17 @@ window.resetForm = function() {
 };
 
 // Initialize event listeners  (Added to the end for clarity)
-document.addEventListener('DOMContentLoaded', function() {
-    // إضافة مستمعي الأحداث للرتبة
-    const oldRankSelect = document.getElementById('old-rank');
-    const newRankSelect = document.getElementById('new-rank');
-    if (oldRankSelect) oldRankSelect.addEventListener('change', window.updateRankAndDegree);
-    if (newRankSelect) newRankSelect.addEventListener('change', window.updateSalaryScale);
+// إضافة مستمعي الأحداث للرتبة
+// إضافة مستمعي الأحداث للدرجة
 
-    // إضافة مستمعي الأحداث للدرجة
-    const oldDegreeSelect = document.getElementById('old-degree');
-    const newDegreeSelect = document.getElementById('new-degree');
-    if (oldDegreeSelect) oldDegreeSelect.addEventListener('change', window.updateBasedOnOldDegree);
-    if (newDegreeSelect) newDegreeSelect.addEventListener('change', window.updateSalaryScale);
 
-    // تبديل إلى التبويب الأول
-    window.switchTab('data');
-});
+// Default to first tab
+// تبديل إلى التبويب الأول
+
+window.switchTab = switchTab;
+window.updateRankAndDegree = updateRankAndDegree;
+window.updateSalaryScale = updateSalaryScale;
+window.updateBasedOnOldDegree = updateBasedOnOldDegree;
+window.showAddAllowanceModal = showAddAllowanceModal;
+window.toggleAllowanceCalculation = toggleAllowanceCalculation;
+window.calculateAllowances = calculateAllowances;
